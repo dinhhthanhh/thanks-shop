@@ -1,0 +1,72 @@
+{
+    "navbar": {
+        "home": "Trang chủ",
+        "products": "Sản phẩm",
+        "cart": "Giỏ hàng",
+        "orders": "Đơn hàng",
+        "admin": "Quản trị",
+        "admin_chat": "Chat Hỗ Trợ",
+        "profile": "Hồ sơ",
+        "logout": "Đăng xuất",
+        "login": "Đăng nhập",
+        "register": "Đăng ký"
+    },
+    "home": {
+        "hero_title": "Chào mừng bạn đến với Thanks-Shop",
+        "hero_subtitle": "Nơi tin cậy cung cấp các sản phẩm tẩy rửa gia dụng",
+        "shop_now": "Mua sắm ngay",
+        "explore_more": "Khám Phá Thêm",
+        "featured_products": "Sản phẩm nổi bật",
+        "featured_subtitle": "Khám phá những sản phẩm tẩy rửa phổ biến nhất của chúng tôi",
+        "view_all": "Xem tất cả sản phẩm",
+        "shop_by_category": "Mua theo danh mục"
+    },
+    "products": {
+        "filters": "Bộ lọc",
+        "search_placeholder": "Tìm kiếm sản phẩm...",
+        "category": "Danh mục",
+        "all_categories": "Tất cả danh mục",
+        "price_range": "Khoảng giá",
+        "min": "Tối thiểu",
+        "max": "Tối đa",
+        "apply_filters": "Áp dụng bộ lọc",
+        "reset": "Đặt lại",
+        "in_stock": "Còn hàng",
+        "out_of_stock": "Hết hàng",
+        "add_to_cart": "Thêm vàogiỏ",
+        "buy_now": "Mua ngay"
+    },
+    "search": {
+        "placeholder": "Tìm kiếm sản phẩm...",
+        "results_for": "Kết quả tìm kiếm cho",
+        "products_found": "sản phẩm được tìm thấy",
+        "no_results": "Không tìm thấy sản phẩm",
+        "try_different": "Thử từ khóa khác",
+        "browse_all": "Xem tất cả sản phẩm"
+    },
+    "notifications": {
+        "title": "Thông báo",
+        "no_notifications": "Không có thông báo"
+    },
+    "chat": {
+        "support": "Hỗ Trợ Khách Hàng",
+        "online": "Chúng tôi luôn sẵn sàng hỗ trợ",
+        "type_message": "Nhập tin nhắn...",
+        "attach_file": "Đính kèm file",
+        "file_too_large": "Kích thước file phải nhỏ hơn 5MB",
+        "upload_failed": "Tải file thất bại",
+        "back_home": "Về trang chủ",
+        "auto_reply": "Trả lời tự động"
+    },
+    "admin_chat": {
+        "title": "Hỗ Trợ Khách Hàng",
+        "no_conversations": "Không có cuộc hội thoại nào",
+        "start_conversation": "Chưa có tin nhắn nào",
+        "select_to_start": "Chọn một khách hàng để bắt đầu trò chuyện",
+        "type_placeholder": "Nhập tin nhắn của bạn...",
+        "search_customers": "Tìm kiếm khách hàng...",
+        "search_messages": "Tìm kiếm tin nhắn...",
+        "no_results": "Không tìm thấy khách hàng",
+        "auto_reply": "🤖 Trả lời tự động"
+    }
+}
