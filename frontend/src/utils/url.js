@@ -28,8 +28,29 @@ export const getSocketURL = () => {
 };
 
 // Helper to construct image URL
-export const getImageURL = (imagePath) => {
-    if (!imagePath) return 'https://via.placeholder.com/400x400?text=Product+Image';
-    if (imagePath.startsWith('http')) return imagePath;
+export const getImageURL = (imagePath, product = null) => {
+    // If no imagePath provided, try to get from product object (backward compatibility)
+    if (!imagePath && product) {
+        // Try new images array first
+        if (product.images && product.images.length > 0) {
+            imagePath = product.images[0];
+        }
+        // Fallback to old image field
+        else if (product.image) {
+            imagePath = product.image;
+        }
+    }
+
+    // If still no image, return placeholder (using imgbb.com which is more reliable)
+    if (!imagePath) {
+        return 'https://i.ibb.co/9ZQ5YQ3/placeholder-product.png';
+    }
+
+    // If already a full URL, return as is
+    if (imagePath.startsWith('http')) {
+        return imagePath;
+    }
+
+    // Otherwise, prepend backend URL
     return `${getBaseURL()}${imagePath}`;
 };
