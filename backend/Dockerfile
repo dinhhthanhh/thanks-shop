@@ -13,6 +13,9 @@ RUN npm install
 # Copy app source
 COPY . .
 
+# Create upload directory and set permissions
+RUN mkdir -p uploads/chat-attachments && chmod -R 777 uploads
+
 # Expose port
 EXPOSE 5000
 

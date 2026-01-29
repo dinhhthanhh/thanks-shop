@@ -186,7 +186,8 @@ const ChatWidget = () => {
             return response.data;
         } catch (error) {
             console.error('Failed to upload file:', error);
-            alert(t('chat.upload_failed') || 'File upload failed');
+            const errorMsg = error.response?.data?.message || error.message || 'File upload failed';
+            alert(`${t('chat.upload_failed') || 'Upload thất bại'}: ${errorMsg}`);
             return null;
         }
     };
