@@ -1,14 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { formatPrice } from '../../utils/currency';
+import { getImageURL } from '../../utils/url';
 
 const ProductCard = ({ product }) => {
     const { i18n } = useTranslation();
 
     // Get first image or fallback to placeholder
-    const imageUrl = product.images?.[0]
-        ? (product.images[0].startsWith('http') ? product.images[0] : `http://localhost:5000${product.images[0]}`)
-        : 'https://via.placeholder.com/400x400?text=Product+Image';
+    const imageUrl = getImageURL(product.images?.[0]);
 
     return (
         <Link to={`/products/${product._id}`} className="card group">

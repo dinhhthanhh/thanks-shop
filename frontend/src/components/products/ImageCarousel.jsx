@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getImageURL } from '../../utils/url';
 
 const ImageCarousel = ({ images = [] }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,9 +29,7 @@ const ImageCarousel = ({ images = [] }) => {
     };
 
     const currentImage = images[currentIndex];
-    const imageUrl = currentImage?.startsWith('http')
-        ? currentImage
-        : `http://localhost:5000${currentImage}`;
+    const imageUrl = getImageURL(currentImage);
 
     return (
         <div className="relative w-full">
@@ -84,17 +83,15 @@ const ImageCarousel = ({ images = [] }) => {
             {images.length > 1 && (
                 <div className="flex justify-center gap-2 mt-4">
                     {images.map((img, index) => {
-                        const thumbUrl = img?.startsWith('http')
-                            ? img
-                            : `http://localhost:5000${img}`;
+                        const thumbUrl = getImageURL(img);
 
                         return (
                             <button
                                 key={index}
                                 onClick={() => goToSlide(index)}
                                 className={`w-16 h-16 rounded-md overflow-hidden border-2 transition-all ${index === currentIndex
-                                        ? 'border-primary-600 ring-2 ring-primary-300'
-                                        : 'border-gray-300 hover:border-gray-400'
+                                    ? 'border-primary-600 ring-2 ring-primary-300'
+                                    : 'border-gray-300 hover:border-gray-400'
                                     }`}
                                 aria-label={`Go to image ${index + 1}`}
                             >
