@@ -24,14 +24,35 @@ const AdminProducts = () => {
     const [imageUrlInput, setImageUrlInput] = useState('');
     const [uploadMethod, setUploadMethod] = useState('file'); // 'file' or 'url'
 
+    // Search and Filter States
+    const [search, setSearch] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('');
+    const [stockFilter, setStockFilter] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [search]);
+
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [debouncedSearch, categoryFilter, stockFilter]);
 
     const fetchData = async () => {
+        setLoading(true);
         try {
+            const params = {
+                limit: 100,
+                search: debouncedSearch,
+                category: categoryFilter,
+                stockStatus: stockFilter
+            };
             const [productsRes, categoriesRes] = await Promise.all([
-                productsAPI.getAll({ limit: 100 }),
+                productsAPI.getAll(params),
                 categoriesAPI.getAll()
             ]);
             setProducts(productsRes.data.products);
@@ -41,6 +62,12 @@ const AdminProducts = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const clearFilters = () => {
+        setSearch('');
+        setCategoryFilter('');
+        setStockFilter('');
     };
 
     const handleImageChange = (e) => {
@@ -195,6 +222,64 @@ const AdminProducts = () => {
                     >
                         Add Product
                     </button>
+                </div>
+
+                {/* Search and Filters */}
+                <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-wrap gap-4 items-end">
+                    <div className="flex-1 min-w-[200px]">
+                        <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Search</label>
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="Search products..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="input-field pl-10"
+                            />
+                            <span className="absolute left-3 top-2.5 text-gray-400">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="w-48">
+                        <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Category</label>
+                        <select
+                            value={categoryFilter}
+                            onChange={(e) => setCategoryFilter(e.target.value)}
+                            className="input-field"
+                        >
+                            <option value="">All Categories</option>
+                            {categories.map(cat => (
+                                <option key={cat._id} value={cat._id}>{cat.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="w-48">
+                        <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Stock Status</label>
+                        <select
+                            value={stockFilter}
+                            onChange={(e) => setStockFilter(e.target.value)}
+                            className="input-field"
+                        >
+                            <option value="">All Statuses</option>
+                            <option value="available">In Stock</option>
+                            <option value="low">Low Stock (&lt;10)</option>
+                            <option value="out">Out of Stock</option>
+                        </select>
+                    </div>
+
+                    {(search || categoryFilter || stockFilter) && (
+                        <button
+                            onClick={clearFilters}
+                            className="mb-1 text-sm text-red-600 hover:text-red-800 font-medium pb-2 px-2"
+                        >
+                            Clear
+                        </button>
+                    )}
                 </div>
 
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">

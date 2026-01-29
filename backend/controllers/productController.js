@@ -5,19 +5,31 @@ import Product from '../models/Product.js';
 // @access  Public
 export const getProducts = async (req, res, next) => {
     try {
-        const { search, category, minPrice, maxPrice, page = 1, limit = 12 } = req.query;
+        const { search, category, minPrice, maxPrice, stockStatus, page = 1, limit = 12 } = req.query;
 
         // Build query
         let query = {};
 
         // Search by name or description
         if (search) {
-            query.$text = { $search: search };
+            query.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { description: { $regex: search, $options: 'i' } }
+            ];
         }
 
         // Filter by category
         if (category) {
             query.category = category;
+        }
+
+        // Filter by stock status
+        if (stockStatus === 'low') {
+            query.stock = { $gt: 0, $lt: 10 };
+        } else if (stockStatus === 'out') {
+            query.stock = 0;
+        } else if (stockStatus === 'available') {
+            query.stock = { $gt: 0 };
         }
 
         // Filter by price range
