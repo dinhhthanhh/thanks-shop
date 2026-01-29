@@ -21,6 +21,7 @@ const AdminProducts = () => {
     const [imageFiles, setImageFiles] = useState([]);
     const [imagePreviews, setImagePreviews] = useState([]);
     const [uploading, setUploading] = useState(false);
+    const [imageUrlInput, setImageUrlInput] = useState('');
 
     useEffect(() => {
         fetchData();
@@ -53,6 +54,24 @@ const AdminProducts = () => {
     const removeImage = (index) => {
         const newImages = formData.images.filter((_, i) => i !== index);
         setFormData({ ...formData, images: newImages });
+    };
+
+    const handleAddImageUrl = () => {
+        if (!imageUrlInput.trim()) return;
+
+        // Basic URL validation
+        try {
+            new URL(imageUrlInput);
+        } catch (e) {
+            alert('Please enter a valid URL');
+            return;
+        }
+
+        setFormData({
+            ...formData,
+            images: [...formData.images, imageUrlInput.trim()]
+        });
+        setImageUrlInput('');
     };
 
     const uploadImages = async () => {
@@ -262,6 +281,26 @@ const AdminProducts = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Product Images</label>
+
+                                    {/* Link Input */}
+                                    <div className="flex space-x-2 mb-2">
+                                        <input
+                                            type="text"
+                                            placeholder="Paste image URL here..."
+                                            value={imageUrlInput}
+                                            onChange={(e) => setImageUrlInput(e.target.value)}
+                                            className="input-field flex-1"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={handleAddImageUrl}
+                                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 text-sm font-medium border"
+                                        >
+                                            Add URL
+                                        </button>
+                                    </div>
+
+                                    {/* File Input */}
                                     <input
                                         type="file"
                                         multiple
@@ -269,13 +308,13 @@ const AdminProducts = () => {
                                         onChange={handleImageChange}
                                         className="input-field"
                                     />
-                                    <p className="text-xs text-gray-500 mt-1">You can select multiple images (max 10)</p>
+                                    <p className="text-xs text-gray-500 mt-1">Select files or paste a link above (max 10 images)</p>
 
                                     {/* Image Previews */}
                                     <div className="mt-3 grid grid-cols-4 gap-2">
                                         {/* Existing images from formData */}
                                         {formData.images.map((img, index) => (
-                                            <div key={`existing-${index}`} className="relative">
+                                            <div key={`existing-${index}`} className="relative group">
                                                 <img
                                                     src={getNormalizedImageUrl(img)}
                                                     alt={`Product ${index + 1}`}
@@ -284,7 +323,7 @@ const AdminProducts = () => {
                                                 <button
                                                     type="button"
                                                     onClick={() => removeImage(index)}
-                                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-sm"
                                                 >
                                                     ×
                                                 </button>
@@ -292,7 +331,7 @@ const AdminProducts = () => {
                                         ))}
                                         {/* New image previews */}
                                         {imagePreviews.map((preview, index) => (
-                                            <div key={`preview-${index}`} className="relative">
+                                            <div key={`preview-${index}`} className="relative group">
                                                 <img
                                                     src={preview}
                                                     alt={`Preview ${index + 1}`}
@@ -306,7 +345,7 @@ const AdminProducts = () => {
                                                         setImageFiles(newFiles);
                                                         setImagePreviews(newPreviews);
                                                     }}
-                                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-sm"
                                                 >
                                                     ×
                                                 </button>

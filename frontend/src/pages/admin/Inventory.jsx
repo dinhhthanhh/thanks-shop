@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { adminAPI } from '../../services/api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import Loading from '../../components/common/Loading';
+import { getNormalizedImageUrl } from '../../utils/url';
 
 const Inventory = () => {
     const [inventory, setInventory] = useState(null);
@@ -62,7 +63,7 @@ const Inventory = () => {
                                 <tr key={product._id} className={product.stock < 10 ? 'bg-red-50' : ''}>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
-                                            <img src={product.image} alt={product.name} className="w-10 h-10 rounded" />
+                                            <img src={getNormalizedImageUrl(product.image || product.images?.[0])} alt={product.name} className="w-10 h-10 rounded object-cover" />
                                             <span className="ml-3">{product.name}</span>
                                         </div>
                                     </td>

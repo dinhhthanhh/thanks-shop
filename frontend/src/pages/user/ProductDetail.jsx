@@ -7,6 +7,7 @@ import { useCart } from '../../context/CartContext';
 import Loading from '../../components/common/Loading';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import { formatPrice } from '../../utils/currency';
+import { getNormalizedImageUrl } from '../../utils/url';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -88,7 +89,7 @@ const ProductDetail = () => {
                 {/* Product Image */}
                 <div className="aspect-w-1 aspect-h-1">
                     <img
-                        src={product.image}
+                        src={getNormalizedImageUrl(product.image || product.images?.[0])}
                         alt={product.name}
                         className="w-full h-96 object-cover rounded-lg shadow-md"
                     />
