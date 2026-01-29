@@ -73,45 +73,44 @@ router.post('/:conversationId/messages', protect, async (req, res) => {
             return res.status(403).json({ message: 'Not authorized' });
         }
 
+        console.log('📝 Creating new message for conversation:', req.params.conversationId);
         const newMessage = await Message.create({
             conversation: req.params.conversationId,
             sender: req.user._id,
             senderType: isAdmin ? 'admin' : 'user',
-            message: message || (attachments && attachments.length > 0 ? 'Sent an attachment' : ''),
+            message: message || (attachments && attachments.length > 0 ? 'Sent an attachment' : 'Empty message'),
             status: 'delivered',
             attachments: attachments || []
         });
 
-        // Update conversation
-        conversation.lastMessage = message || 'Sent an attachment';
+        console.log('✅ Message created, updating conversation...');
+        conversation.lastMessage = message || (attachments && attachments.length > 0 ? 'Sent an attachment' : 'Empty message');
         conversation.lastMessageAt = new Date();
         if (!isAdmin) {
             conversation.unreadCount += 1;
         }
         await conversation.save();
 
+        console.log('👤 Populating sender info...');
         await newMessage.populate('sender', 'name');
 
-        // Emit real-time event
         try {
             const io = req.app.get('socketio') || req.app.get('io');
             if (io) {
-                console.log('📡 Emitting new_message to room:', req.params.conversationId);
+                console.log('📡 Emitting events via Socket.io');
                 io.to(req.params.conversationId).emit('new_message', newMessage);
 
-                // Notify Admin specifically if user is sending
                 if (!isAdmin) {
-                    console.log('📡 Notifying admin of new message');
                     io.emit('new_admin_message', {
                         conversationId: req.params.conversationId,
                         message: newMessage,
                         userName: req.user.name
                     });
 
-                    // Send auto-reply logic...
                     if (!conversation.hasAutoReplied) {
                         const settings = await Settings.findOne();
                         if (settings && settings.autoReplyEnabled) {
+                            console.log('🤖 Creating auto-reply message');
                             const autoReplyMsg = await Message.create({
                                 conversation: req.params.conversationId,
                                 sender: req.user._id,
@@ -127,7 +126,6 @@ router.post('/:conversationId/messages', protect, async (req, res) => {
                             await conversation.save();
 
                             setTimeout(() => {
-                                console.log('🤖 Sending auto-reply');
                                 io.to(req.params.conversationId).emit('new_message', autoReplyMsg);
                             }, 1000);
                         }
@@ -136,18 +134,20 @@ router.post('/:conversationId/messages', protect, async (req, res) => {
                     conversation.hasAutoReplied = true;
                     await conversation.save();
                 }
-            } else {
-                console.warn('⚠️ Socket.io instance not found in app context');
             }
-        } catch (socketError) {
-            console.error('❌ Socket emission error:', socketError);
-            // Don't fail the whole request if only socket fails
+        } catch (socketErr) {
+            console.error('⚠️ Socket.io notification failed, but message was saved:', socketErr.message);
         }
 
+        console.log('✨ Message process completed successfully');
         res.status(201).json(newMessage);
     } catch (error) {
-        console.error('❌ Error in send message route:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('❌ CRITICAL ERROR in POST /messages:', error);
+        res.status(500).json({
+            message: 'Server error during message sending',
+            error: error.message,
+            stack: process.env.NODE_ENV === 'production' ? null : error.stack
+        });
     }
 });
 
