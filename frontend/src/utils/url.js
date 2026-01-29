@@ -1,17 +1,30 @@
+// Auto-detect production URLs
+const isProduction = import.meta.env.PROD;
+const productionBackendURL = 'https://thanks-shop.onrender.com';
+const developmentBackendURL = 'http://localhost:5000';
+
 // Get the base URL for the API (without /api suffix)
 export const getBaseURL = () => {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-    return apiUrl.replace('/api', '');
+    if (import.meta.env.VITE_API_URL) {
+        return import.meta.env.VITE_API_URL.replace('/api', '');
+    }
+    return isProduction ? productionBackendURL : developmentBackendURL;
 };
 
 // Get the full API URL
 export const getAPIURL = () => {
-    return import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    if (import.meta.env.VITE_API_URL) {
+        return import.meta.env.VITE_API_URL;
+    }
+    return isProduction ? `${productionBackendURL}/api` : `${developmentBackendURL}/api`;
 };
 
 // Get the socket URL
 export const getSocketURL = () => {
-    return import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+    if (import.meta.env.VITE_SOCKET_URL) {
+        return import.meta.env.VITE_SOCKET_URL;
+    }
+    return isProduction ? productionBackendURL : developmentBackendURL;
 };
 
 // Helper to construct image URL
