@@ -8,13 +8,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const uploadDir = path.join(__dirname, '../uploads/chat-attachments');
+console.log('📁 Resolving upload directory at:', uploadDir);
+
 if (!fs.existsSync(uploadDir)) {
+    console.log('📁 Directory missing, creating...');
     fs.mkdirSync(uploadDir, { recursive: true });
+    console.log('✅ Directory created success!');
 }
 
 // Configure storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        console.log('📥 Start uploading file:', file.originalname);
         cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
