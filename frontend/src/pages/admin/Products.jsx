@@ -14,7 +14,7 @@ const AdminProducts = () => {
         description: '',
         price: '',
         category: '',
-        images: [],
+        image: '',
         stock: ''
     });
     const [imageFiles, setImageFiles] = useState([]);
@@ -52,25 +52,29 @@ const AdminProducts = () => {
     const removeImage = (index) => {
         const newFiles = imageFiles.filter((_, i) => i !== index);
         const newPreviews = imagePreviews.filter((_, i) => i !== index);
-        const newImages = formData.images.filter((_, i) => i !== index);
 
         setImageFiles(newFiles);
         setImagePreviews(newPreviews);
-        setFormData({ ...formData, images: newImages });
+        // If removing the only/first image, clear the image field
+        if (index === 0) {
+            setFormData({ ...formData, image: '' });
+        }
     };
 
     const uploadImages = async () => {
-        if (imageFiles.length === 0) return formData.images;
+        if (imageFiles.length === 0) return formData.image;
 
         setUploading(true);
         const formDataUpload = new FormData();
+        // Upload all selected images
         imageFiles.forEach(file => {
             formDataUpload.append('images', file);
         });
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/products/upload-images', {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${API_URL}/products/upload-images`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -81,11 +85,12 @@ const AdminProducts = () => {
             if (!response.ok) throw new Error('Upload failed');
 
             const data = await response.json();
-            return [...formData.images, ...data.images];
+            // Only return the first image URL since backend model only supports single image
+            return data.images[0] || formData.image;
         } catch (error) {
-            console.error('Error uploading images:', error);
-            alert('Failed to upload images');
-            return formData.images;
+            console.error('Error uploading image:', error);
+            alert('Failed to upload image');
+            return formData.image;
         } finally {
             setUploading(false);
         }
@@ -94,9 +99,9 @@ const AdminProducts = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Upload images first
-            const uploadedImages = await uploadImages();
-            const dataToSubmit = { ...formData, images: uploadedImages };
+            // Upload images first and get the first image URL
+            const uploadedImage = await uploadImages();
+            const dataToSubmit = { ...formData, image: uploadedImage };
 
             if (editingProduct) {
                 await productsAPI.update(editingProduct._id, dataToSubmit);
@@ -120,7 +125,7 @@ const AdminProducts = () => {
             description: product.description,
             price: product.price,
             category: product.category._id,
-            images: product.images || [],
+            image: product.image || '',
             stock: product.stock
         });
         setImageFiles([]);
@@ -145,7 +150,7 @@ const AdminProducts = () => {
             description: '',
             price: '',
             category: '',
-            images: [],
+            image: '',
             stock: ''
         });
         setImageFiles([]);
