@@ -212,6 +212,7 @@ router.delete('/:reviewId', protect, async (req, res) => {
     try {
         const { reviewId } = req.params;
         const userId = req.user._id;
+        const isAdmin = req.user.role === 'admin';
 
         const review = await Review.findById(reviewId);
 
@@ -219,8 +220,8 @@ router.delete('/:reviewId', protect, async (req, res) => {
             return res.status(404).json({ message: 'Review not found' });
         }
 
-        // Check if user owns this review
-        if (review.user.toString() !== userId.toString()) {
+        // Check if user owns this review OR is an admin
+        if (review.user.toString() !== userId.toString() && !isAdmin) {
             return res.status(403).json({ message: 'Not authorized to delete this review' });
         }
 

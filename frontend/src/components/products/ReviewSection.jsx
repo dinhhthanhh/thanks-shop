@@ -9,6 +9,7 @@ import Loading from '../common/Loading';
 const ReviewSection = ({ productId }) => {
     const { t } = useTranslation();
     const { isAuthenticated, user } = useAuth();
+    const isAdmin = user?.role === 'admin';
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [canReview, setCanReview] = useState(false);
@@ -231,7 +232,7 @@ const ReviewSection = ({ productId }) => {
                 ) : (
                     <>
                         {reviews.map((review) => (
-                            <div key={review._id} className="border-b border-gray-200 pb-6 last:border-0">
+                            <div key={review._id} className="border-b border-gray-200 py-6 last:border-0">
                                 <div className="flex items-start justify-between mb-2">
                                     <div>
                                         <p className="font-semibold text-gray-900">{review.user?.name || 'Anonymous'}</p>
@@ -242,8 +243,20 @@ const ReviewSection = ({ productId }) => {
                                             </span>
                                         </div>
                                     </div>
+                                    {isAdmin && (
+                                        <button
+                                            onClick={() => handleDelete(review._id)}
+                                            className="text-red-600 hover:text-red-700 text-sm font-medium px-3 py-1 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1"
+                                            title={t('reviews.delete') || 'Xóa bình luận'}
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                            <span>{t('reviews.delete') || 'Xóa'}</span>
+                                        </button>
+                                    )}
                                 </div>
-                                <p className="text-gray-700 mt-2">{review.comment}</p>
+                                <p className="text-gray-700 mt-2 leading-relaxed">{review.comment}</p>
                             </div>
                         ))}
 

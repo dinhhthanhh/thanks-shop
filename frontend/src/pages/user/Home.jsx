@@ -14,7 +14,7 @@ const Home = () => {
     useEffect(() => {
         const fetchFeaturedProducts = async () => {
             try {
-                const response = await productsAPI.getAll({ limit: 8 });
+                const response = await productsAPI.getAll({ limit: 8, sortBy: 'sales' });
                 setFeaturedProducts(response.data.products);
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -29,7 +29,7 @@ const Home = () => {
     return (
         <div className="overflow-hidden">
             {/* Hero Section */}
-            <div className="relative bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white py-24 md:py-32">
+            <div className="relative bg-linear-to-br from-primary-700 via-primary-600 to-primary-800 text-white py-24 md:py-32">
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary-400 rounded-full blur-3xl opacity-20 animate-pulse"></div>
                     <div className="absolute top-1/2 -right-24 w-80 h-80 bg-blue-400 rounded-full blur-3xl opacity-10 animate-pulse delay-700"></div>

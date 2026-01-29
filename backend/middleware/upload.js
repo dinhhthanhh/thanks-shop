@@ -27,6 +27,16 @@ if (!fs.existsSync(productUploadDir)) {
     console.log('✅ Product directory created success!');
 }
 
+// Avatar images directory
+const avatarUploadDir = path.join(__dirname, '../uploads/avatars');
+console.log('📁 Resolving avatar upload directory at:', avatarUploadDir);
+
+if (!fs.existsSync(avatarUploadDir)) {
+    console.log('📁 Avatar directory missing, creating...');
+    fs.mkdirSync(avatarUploadDir, { recursive: true });
+    console.log('✅ Avatar directory created success!');
+}
+
 // Configure storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -73,6 +83,17 @@ const productStorage = multer.diskStorage({
     }
 });
 
+// Avatar storage configuration
+const avatarStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, avatarUploadDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + file.originalname);
+    }
+});
+
 // Product image file filter (only images)
 const productFileFilter = (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
@@ -93,6 +114,15 @@ export const uploadProductImages = multer({
         fileSize: 5 * 1024 * 1024 // 5MB limit per file
     },
     fileFilter: productFileFilter
+});
+
+// Configure multer for avatars
+export const uploadAvatar = multer({
+    storage: avatarStorage,
+    limits: {
+        fileSize: 2 * 1024 * 1024 // 2MB limit for avatars
+    },
+    fileFilter: productFileFilter // Reuse the image-only filter
 });
 
 export default upload;

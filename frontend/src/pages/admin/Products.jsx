@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { productsAPI, categoriesAPI } from '../../services/api';
 import { getNormalizedImageUrl, formatVND } from '../../utils/url';
 import AdminSidebar from '../../components/admin/AdminSidebar';
@@ -75,9 +76,35 @@ const AdminProducts = () => {
         setPage(1);
     }, [debouncedSearch, categoryFilter, stockFilter]);
 
+    const location = useLocation();
+    const navigate = useNavigate();
+
     useEffect(() => {
         fetchData();
     }, [debouncedSearch, categoryFilter, stockFilter, page]);
+
+    // Handle direct edit from ProductDetail page
+    useEffect(() => {
+        const checkDirectEdit = async () => {
+            if (location.state?.editProductId && categories.length > 0) {
+                const productId = location.state.editProductId;
+                try {
+                    const response = await productsAPI.getById(productId);
+                    if (response.data) {
+                        handleEdit(response.data);
+                        // Clear the state so it doesn't reopen on refresh
+                        navigate(location.pathname, { replace: true, state: {} });
+                    }
+                } catch (error) {
+                    console.error('Error fetching product for direct edit:', error);
+                }
+            }
+        };
+
+        if (!loading && categories.length > 0) {
+            checkDirectEdit();
+        }
+    }, [location.state, categories, loading]);
 
     const fetchData = async () => {
         setLoading(true);
@@ -274,7 +301,7 @@ const AdminProducts = () => {
                                 placeholder={t('admin.search_products')}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="input-field"
+                                className="input-field pl-12"
                             />
                         </div>
                     </div>

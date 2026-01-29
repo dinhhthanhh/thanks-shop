@@ -22,6 +22,7 @@ export const register = async (req, res, next) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            avatar: user.avatar,
             token: generateToken(user._id)
         });
     } catch (error) {
@@ -53,6 +54,7 @@ export const login = async (req, res, next) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            avatar: user.avatar,
             token: generateToken(user._id)
         });
     } catch (error) {
@@ -71,7 +73,8 @@ export const getProfile = async (req, res, next) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                avatar: user.avatar
             });
         } else {
             res.status(404).json({ message: 'User not found' });
@@ -91,6 +94,7 @@ export const updateProfile = async (req, res, next) => {
         if (user) {
             user.name = req.body.name || user.name;
             user.email = req.body.email || user.email;
+            user.avatar = req.body.avatar || user.avatar;
 
             if (req.body.password) {
                 user.password = req.body.password;
@@ -103,8 +107,33 @@ export const updateProfile = async (req, res, next) => {
                 name: updatedUser.name,
                 email: updatedUser.email,
                 role: updatedUser.role,
+                avatar: updatedUser.avatar,
                 token: generateToken(updatedUser._id)
             });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Upload avatar
+// @route   POST /api/auth/avatar
+// @access  Private
+export const uploadAvatarImage = async (req, res, next) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'Please upload an image' });
+        }
+
+        const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+
+        const user = await User.findById(req.user._id);
+        if (user) {
+            user.avatar = avatarUrl;
+            await user.save();
+            res.json({ avatar: avatarUrl });
         } else {
             res.status(404).json({ message: 'User not found' });
         }

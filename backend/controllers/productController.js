@@ -5,7 +5,7 @@ import Product from '../models/Product.js';
 // @access  Public
 export const getProducts = async (req, res, next) => {
     try {
-        const { search, category, minPrice, maxPrice, stockStatus, page = 1, limit = 12 } = req.query;
+        const { search, category, minPrice, maxPrice, stockStatus, sortBy, page = 1, limit = 12 } = req.query;
 
         // Build query
         let query = {};
@@ -39,12 +39,24 @@ export const getProducts = async (req, res, next) => {
             if (maxPrice) query.price.$lte = Number(maxPrice);
         }
 
+        // Sort logic
+        let sortOptions = { createdAt: -1 };
+        if (sortBy === 'sales') {
+            sortOptions = { soldCount: -1 };
+        } else if (sortBy === 'rating') {
+            sortOptions = { averageRating: -1 };
+        } else if (sortBy === 'price-asc') {
+            sortOptions = { price: 1 };
+        } else if (sortBy === 'price-desc') {
+            sortOptions = { price: -1 };
+        }
+
         // Execute query with pagination
         const products = await Product.find(query)
             .populate('category', 'name')
             .limit(limit * 1)
             .skip((page - 1) * limit)
-            .sort({ createdAt: -1 });
+            .sort(sortOptions);
 
         // Get total count
         const count = await Product.countDocuments(query);

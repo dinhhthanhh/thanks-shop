@@ -4,16 +4,53 @@ import { authAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import ErrorMessage from '../../components/common/ErrorMessage';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const BASE_URL = API_URL.replace('/api', '');
+
 const Profile = () => {
     const { user, updateUser } = useAuth();
     const { t } = useTranslation();
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
+    const [avatar, setAvatar] = useState(user?.avatar || '');
+    const [avatarPreview, setAvatarPreview] = useState(user?.avatar ? (user.avatar.startsWith('http') ? user.avatar : `${BASE_URL}${user.avatar}`) : null);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
+
+    const handleAvatarChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Preview
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setAvatarPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+
+        // Upload
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        setUploading(true);
+        setError('');
+        try {
+            const response = await authAPI.uploadAvatar(formData);
+            setAvatar(response.data.avatar);
+            setSuccess(t('profile.avatar_update_success') || 'Ảnh đại diện đã được cập nhật!');
+
+            // Update user context immediately
+            updateUser({ ...user, avatar: response.data.avatar });
+        } catch (error) {
+            setError(error.response?.data?.message || 'Failed to upload avatar');
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,7 +69,7 @@ const Profile = () => {
 
         setLoading(true);
         try {
-            const data = { name, email };
+            const data = { name, email, avatar };
             if (password) data.password = password;
 
             const response = await authAPI.updateProfile(data);
@@ -60,6 +97,39 @@ const Profile = () => {
                         {success}
                     </div>
                 )}
+
+                {/* Avatar Upload Section */}
+                <div className="flex flex-col items-center mb-8">
+                    <div className="relative group cursor-pointer" onClick={() => document.getElementById('avatar-input').click()}>
+                        <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary-50 shadow-lg relative bg-gray-100 flex items-center justify-center">
+                            {avatarPreview ? (
+                                <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                            ) : (
+                                <span className="text-3xl font-bold text-gray-400">{user?.name?.charAt(0).toUpperCase()}</span>
+                            )}
+                            {uploading && (
+                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                </div>
+                            )}
+                        </div>
+                        <div className="absolute bottom-0 right-0 bg-primary-600 text-white p-1.5 rounded-full shadow-lg border-2 border-white transform translate-x-1 translate-y-1">
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <input
+                            id="avatar-input"
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleAvatarChange}
+                            disabled={uploading}
+                        />
+                    </div>
+                    <p className="mt-2 text-xs text-gray-500 font-medium">Nhấn để thay đổi ảnh đại diện</p>
+                </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>

@@ -31,6 +31,7 @@ import Settings from './pages/admin/Settings';
 import AdminChat from './pages/admin/Chat';
 import ThemeDecorator from './components/common/ThemeDecorator';
 import ChatWidget from './components/chat/ChatWidget';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
       <CartProvider>
         <ThemeProvider>
           <ThemeDecorator />
+          <Toaster position="top-right" reverseOrder={false} />
           <Router>
             <div className="min-h-screen flex flex-col">
               <Routes>

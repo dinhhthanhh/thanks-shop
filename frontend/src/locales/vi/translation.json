@@ -15,7 +15,7 @@
         "loading": "Đang tải..."
     },
     "home": {
-        "hero_title": "Chào mừng bạn đến với Thanks-Shop",
+        "hero_title": "Chào mừng bạn đến với Thanks Shop",
         "hero_subtitle": "Nơi tin cậy cung cấp các sản phẩm tẩy rửa gia dụng",
         "shop_now": "Mua sắm ngay",
         "explore_more": "Khám Phá Thêm",
@@ -80,6 +80,7 @@
     },
     "search": {
         "placeholder": "Tìm kiếm sản phẩm...",
+        "button": "Tìm kiếm",
         "results_for": "Kết quả tìm kiếm cho",
         "products_found": "sản phẩm được tìm thấy",
         "no_results": "Không tìm thấy sản phẩm",
@@ -276,6 +277,7 @@
         "of": "trên",
         "results": "kết quả",
         "previous": "Trước",
-        "next": "Tiếp"
+        "next": "Tiếp",
+        "management_mode": "Chế độ quản trị viên"
     }
 }

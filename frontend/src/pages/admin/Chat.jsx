@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { chatAPI } from '../../services/api';
 import { getNormalizedImageUrl } from '../../utils/url';
@@ -28,6 +29,7 @@ const AdminChat = () => {
     const fileInputRef = useRef(null);
     const { user } = useAuth();
     const { t } = useTranslation();
+    const navigate = useNavigate();
 
     // Keep ref in sync with state for socket callbacks
     useEffect(() => {
@@ -254,10 +256,21 @@ const AdminChat = () => {
             {/* Sidebar: Conversation List */}
             <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
                 <div className="p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
-                    <h2 className="text-xl font-bold text-gray-800 mb-3">{t('admin_chat.title') || 'Customer Support'}</h2>
+                    <div className="flex items-center justify-between mb-3">
+                        <h2 className="text-xl font-bold text-gray-800">{t('admin_chat.title') || 'Hỗ Trợ Khách Hàng'}</h2>
+                        <button
+                            onClick={() => navigate('/')}
+                            className="p-2 bg-linear-to-r from-primary-100 to-primary-200 text-primary-600 hover:from-primary-200 hover:to-primary-300 rounded-xl transition-all hover:scale-105 shadow-sm hover:shadow-md"
+                            title={t('chat.back_home') || 'Quay về trang chủ'}
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                        </button>
+                    </div>
                     <input
                         type="text"
-                        placeholder={t('admin_chat.search_customers') || 'Search customers...'}
+                        placeholder={t('admin_chat.search_customers') || 'Tìm kiếm khách hàng...'}
                         value={customerSearch}
                         onChange={(e) => setCustomerSearch(e.target.value)}
                         className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -305,8 +318,8 @@ const AdminChat = () => {
                     <>
                         {/* Chat Header */}
                         <div className="p-4 bg-white border-b border-gray-200 flex items-center justify-between shadow-sm z-10">
-                            <div className="flex items-center">
-                                <div className="w-10 h-10 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center font-bold mr-3">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center font-bold">
                                     {activeConversation.user?.name?.charAt(0).toUpperCase() || '?'}
                                 </div>
                                 <div>
@@ -314,13 +327,15 @@ const AdminChat = () => {
                                     <p className="text-xs text-green-500 font-medium">{activeConversation.user?.email}</p>
                                 </div>
                             </div>
-                            <input
-                                type="text"
-                                placeholder={t('admin_chat.search_messages') || 'Search messages...'}
-                                value={messageSearch}
-                                onChange={(e) => setMessageSearch(e.target.value)}
-                                className="w-64 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                            />
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="text"
+                                    placeholder={t('admin_chat.search_messages') || 'Tìm kiếm tin nhắn...'}
+                                    value={messageSearch}
+                                    onChange={(e) => setMessageSearch(e.target.value)}
+                                    className="w-64 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                />
+                            </div>
                         </div>
 
                         {/* Messages Area */}
