@@ -87,6 +87,7 @@ export const chatAPI = {
     getMessages: (conversationId) => api.get(`/chat/${conversationId}/messages`),
     sendMessage: (conversationId, data) => api.post(`/chat/${conversationId}/messages`, data),
     markAsRead: (conversationId) => api.patch(`/chat/${conversationId}/read`),
+    getUnreadCount: () => api.get('/chat/admin/unread-count'),
     upload: (formData) => api.post('/chat/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     }),

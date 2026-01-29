@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import NotificationBell from '../notifications/NotificationBell';
 import { chatAPI } from '../../services/api';
+import { io } from 'socket.io-client';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '');
 
