@@ -118,6 +118,27 @@ body {
   .card {
     @apply bg-white rounded-3xl shadow-sm border border-gray-100 hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-500 overflow-hidden;
   }
+
+  /* Custom Navbar/Footer utilities */
+  .nav-link {
+    @apply relative text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors uppercase tracking-wider py-1;
+  }
+
+  .nav-link::after {
+    @apply content-[''] absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm;
+  }
+}
+
+.bg-premium-dark {
+  @apply bg-linear-to-br from-gray-900 via-gray-800 to-black;
 }
 
 .btn-secondary {

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { formatPrice } from '../../utils/currency';
 import { getNormalizedImageUrl } from '../../utils/url';
+import StarRating from '../common/StarRating';
 
 const ProductCard = ({ product }) => {
     const { i18n } = useTranslation();
@@ -23,6 +24,18 @@ const ProductCard = ({ product }) => {
                     {product.name}
                 </h3>
                 <p className="mt-1 text-sm text-gray-500 line-clamp-2">{product.description}</p>
+
+                {/* Rating and Sold Count */}
+                <div className="mt-2 flex items-center gap-2">
+                    <StarRating rating={product.averageRating || 0} readonly size="sm" />
+                    <span className="text-xs text-gray-500">
+                        ({product.reviewCount || 0})
+                    </span>
+                    <span className="text-xs text-gray-400">•</span>
+                    <span className="text-xs text-gray-500">
+                        {product.soldCount || 0} sold
+                    </span>
+                </div>
                 <div className="mt-3 flex items-center justify-between">
                     <p className="text-xl font-bold text-primary-600">
                         {formatPrice(product.price, i18n.language)}

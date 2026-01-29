@@ -26,6 +26,7 @@ import AdminOrders from './pages/admin/Orders';
 import Inventory from './pages/admin/Inventory';
 import Revenue from './pages/admin/Revenue';
 import Coupons from './pages/admin/Coupons';
+import Categories from './pages/admin/Categories';
 import Settings from './pages/admin/Settings';
 import AdminChat from './pages/admin/Chat';
 import ThemeDecorator from './components/common/ThemeDecorator';
@@ -43,6 +44,7 @@ function App() {
                 {/* Admin Routes - No Navbar/Footer */}
                 <Route path="/admin/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
                 <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+                <Route path="/admin/categories" element={<AdminRoute><Categories /></AdminRoute>} />
                 <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
                 <Route path="/admin/inventory" element={<AdminRoute><Inventory /></AdminRoute>} />
                 <Route path="/admin/revenue" element={<AdminRoute><Revenue /></AdminRoute>} />

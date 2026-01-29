@@ -3,8 +3,10 @@ import { useSearchParams } from 'react-router-dom';
 import { productsAPI, categoriesAPI } from '../../services/api';
 import ProductList from '../../components/products/ProductList';
 import Loading from '../../components/common/Loading';
+import { useTranslation } from 'react-i18next';
 
 const Products = () => {
+    const { t } = useTranslation();
     const [searchParams, setSearchParams] = useSearchParams();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -69,35 +71,35 @@ const Products = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">Products</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('products.title')}</h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {/* Filters Sidebar */}
                 <div className="lg:col-span-1">
                     <div className="bg-white p-6 rounded-lg shadow-md sticky top-20">
-                        <h2 className="text-lg font-semibold mb-4">Filters</h2>
+                        <h2 className="text-lg font-semibold mb-4">{t('products.filters')}</h2>
                         <form onSubmit={handleFilter} className="space-y-4">
                             {/* Search */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">{t('search.placeholder')}</label>
                                 <input
                                     type="text"
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    placeholder="Search products..."
+                                    placeholder={t('products.search_placeholder')}
                                     className="input-field"
                                 />
                             </div>
 
                             {/* Category */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">{t('products.category')}</label>
                                 <select
                                     value={selectedCategory}
                                     onChange={(e) => setSelectedCategory(e.target.value)}
                                     className="input-field"
                                 >
-                                    <option value="">All Categories</option>
+                                    <option value="">{t('products.all_categories')}</option>
                                     {categories.map((cat) => (
                                         <option key={cat._id} value={cat._id}>{cat.name}</option>
                                     ))}
@@ -106,13 +108,13 @@ const Products = () => {
 
                             {/* Price Range */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">{t('products.price_range')}</label>
                                 <div className="grid grid-cols-2 gap-2">
                                     <input
                                         type="number"
                                         value={minPrice}
                                         onChange={(e) => setMinPrice(e.target.value)}
-                                        placeholder="Min"
+                                        placeholder={t('products.min')}
                                         className="input-field"
                                         min="0"
                                     />
@@ -120,7 +122,7 @@ const Products = () => {
                                         type="number"
                                         value={maxPrice}
                                         onChange={(e) => setMaxPrice(e.target.value)}
-                                        placeholder="Max"
+                                        placeholder={t('products.max')}
                                         className="input-field"
                                         min="0"
                                     />
@@ -128,8 +130,8 @@ const Products = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <button type="submit" className="btn-primary w-full">Apply Filters</button>
-                                <button type="button" onClick={handleReset} className="btn-outline w-full">Reset</button>
+                                <button type="submit" className="btn-primary w-full">{t('products.apply_filters')}</button>
+                                <button type="button" onClick={handleReset} className="btn-outline w-full">{t('products.reset')}</button>
                             </div>
                         </form>
                     </div>

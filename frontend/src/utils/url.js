@@ -1,30 +1,30 @@
-/**
- * Normalizes image URLs for local and production environments.
- * @param {string} imagePath - The path or URL to the image.
- * @returns {string} - The fully qualified image URL or a placeholder.
- */
-export const getNormalizedImageUrl = (imagePath) => {
-    if (!imagePath) {
-        return 'https://placehold.co/400x400?text=Product+Image';
+// Format currency to VND
+export const formatVND = (amount) => {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(amount);
+};
+
+// Format number with thousand separators
+export const formatNumber = (num) => {
+    return new Intl.NumberFormat('vi-VN').format(num);
+};
+
+// Get normalized image URL
+export const getNormalizedImageUrl = (imageUrl) => {
+    if (!imageUrl) return '/placeholder-product.jpg';
+
+    // If it's already a full URL, return as is
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+        return imageUrl;
     }
 
-    // If it's already a full URL (external or placeholder), return it
-    if (imagePath.startsWith('http')) {
-        return imagePath;
+    // If it starts with /uploads, prepend the API URL
+    if (imageUrl.startsWith('/uploads')) {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        return `${apiUrl}${imageUrl}`;
     }
 
-    // Get base URL from environment and remove trailing /api if present
-    const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').trim();
-    // Remove /api and ANY trailing slashes to get a clean base URL
-    const baseUrl = apiUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
-
-    // Ensure imagePath starts with / and remove any duplicate slashes
-    let normalizedPath = imagePath.trim();
-    if (!normalizedPath.startsWith('/')) {
-        normalizedPath = '/' + normalizedPath;
-    }
-    // Remove any double slashes that might have been formed
-    normalizedPath = normalizedPath.replace(/\/+/g, '/');
-
-    return `${baseUrl}${normalizedPath}`;
+    return imageUrl;
 };

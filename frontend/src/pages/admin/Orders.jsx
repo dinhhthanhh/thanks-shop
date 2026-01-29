@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { adminAPI } from '../../services/api';
+import { formatVND } from '../../utils/url';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import Loading from '../../components/common/Loading';
 
 const AdminOrders = () => {
+    const { t } = useTranslation();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -25,10 +28,10 @@ const AdminOrders = () => {
     const handleStatusChange = async (orderId, newStatus) => {
         try {
             await adminAPI.updateOrderStatus(orderId, { status: newStatus });
-            alert('Order status updated!');
+            alert(t('admin.order_status_updated'));
             fetchOrders();
         } catch (error) {
-            alert('Failed to update status');
+            alert(t('admin.failed_to_update_status'));
         }
     };
 
@@ -42,24 +45,34 @@ const AdminOrders = () => {
         }
     };
 
+    const getStatusLabel = (status) => {
+        const statusMap = {
+            'pending': t('admin.status_pending'),
+            'shipped': t('admin.status_shipped'),
+            'completed': t('admin.status_completed'),
+            'cancelled': t('admin.status_cancelled')
+        };
+        return statusMap[status] || status;
+    };
+
     if (loading) return <div className="flex"><AdminSidebar /><Loading /></div>;
 
     return (
         <div className="flex min-h-screen bg-gray-50">
             <AdminSidebar />
             <div className="flex-1 p-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-8">Orders Management</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('admin.orders_management')}</h1>
 
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.order_id')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.customer')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.total')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.status')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.date')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -75,15 +88,15 @@ const AdminOrders = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap font-semibold">
-                                        ${order.totalPrice.toFixed(2)}
+                                        {formatVND(order.totalPrice)}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                                            {order.status}
+                                            {getStatusLabel(order.status)}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {new Date(order.createdAt).toLocaleDateString()}
+                                        {new Date(order.createdAt).toLocaleDateString('vi-VN')}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <select
@@ -91,10 +104,10 @@ const AdminOrders = () => {
                                             onChange={(e) => handleStatusChange(order._id, e.target.value)}
                                             className="text-sm border rounded px-2 py-1"
                                         >
-                                            <option value="pending">Pending</option>
-                                            <option value="shipped">Shipped</option>
-                                            <option value="completed">Completed</option>
-                                            <option value="cancelled">Cancelled</option>
+                                            <option value="pending">{t('admin.status_pending')}</option>
+                                            <option value="shipped">{t('admin.status_shipped')}</option>
+                                            <option value="completed">{t('admin.status_completed')}</option>
+                                            <option value="cancelled">{t('admin.status_cancelled')}</option>
                                         </select>
                                     </td>
                                 </tr>

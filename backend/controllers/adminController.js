@@ -35,6 +35,20 @@ export const updateOrderStatus = async (req, res, next) => {
         order.status = status;
         const updatedOrder = await order.save();
 
+        // If order is completed, increment soldCount for each product
+        if (status === 'completed' && oldStatus !== 'completed') {
+            try {
+                for (const item of order.items) {
+                    await Product.findByIdAndUpdate(
+                        item.product,
+                        { $inc: { soldCount: item.quantity } }
+                    );
+                }
+            } catch (err) {
+                console.error('Failed to update soldCount:', err);
+            }
+        }
+
         // Create notification for user if status changed
         if (oldStatus !== status) {
             try {

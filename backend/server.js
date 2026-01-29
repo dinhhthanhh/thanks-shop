@@ -15,6 +15,7 @@ import adminRoutes from './routes/admin.js';
 import couponRoutes from './routes/coupons.js';
 import notificationRoutes from './routes/notifications.js';
 import chatRoutes from './routes/chat.js';
+import reviewRoutes from './routes/reviews.js';
 
 import { Server } from 'socket.io';
 import http from 'http';
@@ -75,6 +76,7 @@ app.use('/api/coupons', couponRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Error handling
 app.use(notFound);

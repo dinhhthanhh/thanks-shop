@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { adminAPI } from '../../services/api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import Loading from '../../components/common/Loading';
-import { getNormalizedImageUrl } from '../../utils/url';
+import { getNormalizedImageUrl, formatVND } from '../../utils/url';
 
 const Inventory = () => {
+    const { t } = useTranslation();
     const [inventory, setInventory] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -29,18 +31,18 @@ const Inventory = () => {
         <div className="flex min-h-screen bg-gray-50">
             <AdminSidebar />
             <div className="flex-1 p-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-8">Inventory Management</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('admin.inventory_management')}</h1>
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div className="bg-white p-6 rounded-lg shadow-md">
-                        <h3 className="text-sm text-gray-600 mb-2">Total Stock Units</h3>
+                        <h3 className="text-sm text-gray-600 mb-2">{t('admin.total_stock_units')}</h3>
                         <p className="text-3xl font-bold text-gray-900">{inventory?.totalStock || 0}</p>
                     </div>
                     <div className="bg-white p-6 rounded-lg shadow-md">
-                        <h3 className="text-sm text-gray-600 mb-2">Total Stock Value</h3>
+                        <h3 className="text-sm text-gray-600 mb-2">{t('admin.total_stock_value')}</h3>
                         <p className="text-3xl font-bold text-green-600">
-                            ${inventory?.stockValue?.toFixed(2) || '0.00'}
+                            {formatVND(inventory?.stockValue || 0)}
                         </p>
                     </div>
                 </div>
@@ -50,12 +52,12 @@ const Inventory = () => {
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.product')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.category')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.price')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.stock')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.value')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.status')}</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -68,27 +70,27 @@ const Inventory = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">{product.category?.name}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">${product.price.toFixed(2)}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{formatVND(product.price)}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={product.stock < 10 ? 'text-red-600 font-bold' : 'font-semibold'}>
                                             {product.stock}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap font-semibold">
-                                        ${(product.price * product.stock).toFixed(2)}
+                                        {formatVND(product.price * product.stock)}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         {product.stock === 0 ? (
                                             <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">
-                                                Out of Stock
+                                                {t('admin.out_of_stock')}
                                             </span>
                                         ) : product.stock < 10 ? (
                                             <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
-                                                Low Stock
+                                                {t('admin.low_stock')}
                                             </span>
                                         ) : (
                                             <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                                                In Stock
+                                                {t('admin.in_stock')}
                                             </span>
                                         )}
                                     </td>

@@ -110,6 +110,15 @@ export const notificationAPI = {
     markAsRead: (id) => api.patch(`/notifications/${id}/read`),
 };
 
+// Reviews API
+export const reviewsAPI = {
+    getReviews: (productId, params) => api.get(`/reviews/${productId}`, { params }),
+    canReview: (productId) => api.get(`/reviews/${productId}/can-review`),
+    createReview: (productId, data) => api.post(`/reviews/${productId}`, data),
+    updateReview: (reviewId, data) => api.put(`/reviews/${reviewId}`, data),
+    deleteReview: (reviewId) => api.delete(`/reviews/${reviewId}`),
+};
+
 // Admin API
 export const adminAPI = {
     getAllOrders: () => api.get('/admin/orders'),

@@ -15,7 +15,7 @@ const StatsCard = ({ title, value, icon, color = 'primary' }) => {
                     <p className="text-2xl font-bold text-gray-900">{value}</p>
                 </div>
                 <div className={`p-3 rounded-full ${colorClasses[color]}`}>
-                    <span className="text-2xl">{icon}</span>
+                    {icon}
                 </div>
             </div>
         </div>

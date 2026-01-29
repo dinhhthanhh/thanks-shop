@@ -6,6 +6,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import Loading from '../../components/common/Loading';
 import ErrorMessage from '../../components/common/ErrorMessage';
+import StarRating from '../../components/common/StarRating';
+import ReviewSection from '../../components/products/ReviewSection';
 import { formatPrice } from '../../utils/currency';
 import { getNormalizedImageUrl } from '../../utils/url';
 
@@ -99,6 +101,25 @@ const ProductDetail = () => {
                 <div className="space-y-6">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+
+                        {/* Rating and Reviews */}
+                        <div className="flex items-center gap-4 mb-2">
+                            <div className="flex items-center gap-2">
+                                <StarRating rating={product.averageRating || 0} readonly size="sm" />
+                                <span className="text-sm text-gray-600">
+                                    {product.averageRating ? product.averageRating.toFixed(1) : '0.0'}
+                                </span>
+                            </div>
+                            <span className="text-sm text-gray-400">|</span>
+                            <span className="text-sm text-gray-600">
+                                {product.reviewCount || 0} {t('reviews.reviews_count')}
+                            </span>
+                            <span className="text-sm text-gray-400">|</span>
+                            <span className="text-sm text-gray-600">
+                                {product.soldCount || 0} {t('reviews.sold')}
+                            </span>
+                        </div>
+
                         <p className="text-sm text-gray-500">
                             {t('product_detail.category')}: {product.category?.name}
                         </p>
@@ -160,6 +181,9 @@ const ProductDetail = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Reviews Section */}
+            <ReviewSection productId={id} />
         </div>
     );
 };

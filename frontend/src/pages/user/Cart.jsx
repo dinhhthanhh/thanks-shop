@@ -24,7 +24,7 @@ const Cart = () => {
             setCart(response.data);
         } catch (error) {
             console.error('Error fetching cart:', error);
-            setError('Failed to load cart');
+            setError(t('cart.load_failed'));
         } finally {
             setLoading(false);
         }
@@ -36,17 +36,17 @@ const Cart = () => {
             const response = await cartAPI.update({ productId, quantity: newQuantity });
             setCart(response.data);
         } catch (error) {
-            alert(error.response?.data?.message || 'Failed to update quantity');
+            alert(error.response?.data?.message || t('cart.update_failed'));
         }
     };
 
     const handleRemove = async (productId) => {
-        if (!confirm('Remove this item from cart?')) return;
+        if (!confirm(t('cart.remove_confirm'))) return;
         try {
             const response = await cartAPI.remove(productId);
             setCart(response.data);
         } catch (error) {
-            alert('Failed to remove item');
+            alert(t('cart.remove_failed'));
         }
     };
 
@@ -62,13 +62,13 @@ const Cart = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('cart.title')}</h1>
 
             {!cart || cart.items.length === 0 ? (
                 <div className="text-center py-12">
-                    <p className="text-gray-500 text-lg mb-4">Your cart is empty</p>
+                    <p className="text-gray-500 text-lg mb-4">{t('cart.empty')}</p>
                     <Link to="/products" className="btn-primary">
-                        Continue Shopping
+                        {t('cart.continue_shopping')}
                     </Link>
                 </div>
             ) : (
@@ -103,7 +103,7 @@ const Cart = () => {
                                             onClick={() => handleRemove(item.product._id)}
                                             className="ml-4 text-red-600 hover:text-red-700"
                                         >
-                                            Remove
+                                            {t('cart.remove')}
                                         </button>
                                     </div>
                                 </div>
@@ -119,18 +119,18 @@ const Cart = () => {
                     {/* Cart Summary */}
                     <div className="lg:col-span-1">
                         <div className="bg-white p-6 rounded-lg shadow-md sticky top-20">
-                            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                            <h2 className="text-xl font-semibold mb-4">{t('cart.order_summary')}</h2>
                             <div className="space-y-2 mb-4">
                                 <div className="flex justify-between">
-                                    <span>Subtotal</span>
+                                    <span>{t('cart.subtotal')}</span>
                                     <span>{formatPrice(calculateTotal(), i18n.language)}</span>
                                 </div>
                                 <div className="flex justify-between text-sm text-gray-600">
-                                    <span>Shipping</span>
-                                    <span>Free</span>
+                                    <span>{t('cart.shipping')}</span>
+                                    <span>{t('cart.free')}</span>
                                 </div>
                                 <div className="border-t pt-2 flex justify-between font-bold text-lg">
-                                    <span>Total</span>
+                                    <span>{t('cart.total')}</span>
                                     <span className="text-primary-600">{formatPrice(calculateTotal(), i18n.language)}</span>
                                 </div>
                             </div>
@@ -138,7 +138,7 @@ const Cart = () => {
                                 onClick={() => navigate('/checkout')}
                                 className="btn-primary w-full"
                             >
-                                Proceed to Checkout
+                                {t('cart.checkout')}
                             </button>
                         </div>
                     </div>
