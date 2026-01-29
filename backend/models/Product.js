@@ -21,9 +21,9 @@ const productSchema = new mongoose.Schema({
         ref: 'Category',
         required: [true, 'Please provide a category']
     },
-    image: {
-        type: String,
-        default: 'https://via.placeholder.com/400x400?text=Product+Image'
+    images: {
+        type: [String],
+        default: ['https://via.placeholder.com/400x400?text=Product+Image']
     },
     stock: {
         type: Number,

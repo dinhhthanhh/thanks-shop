@@ -13,5 +13,6 @@ services:
     buildCommand: npm run build
     publishDir: dist
     routes:
-      - source: /*
+      - type: rewrite
+        source: /*
         destination: /index.html

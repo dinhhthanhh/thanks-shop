@@ -5,11 +5,16 @@ import { formatPrice } from '../../utils/currency';
 const ProductCard = ({ product }) => {
     const { i18n } = useTranslation();
 
+    // Get first image or fallback to placeholder
+    const imageUrl = product.images?.[0]
+        ? (product.images[0].startsWith('http') ? product.images[0] : `http://localhost:5000${product.images[0]}`)
+        : 'https://via.placeholder.com/400x400?text=Product+Image';
+
     return (
         <Link to={`/products/${product._id}`} className="card group">
             <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200">
                 <img
-                    src={product.image}
+                    src={imageUrl}
                     alt={product.name}
                     className="h-48 w-full object-cover object-center group-hover:scale-105 transition-transform duration-200"
                 />

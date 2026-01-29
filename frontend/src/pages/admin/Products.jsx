@@ -14,9 +14,12 @@ const AdminProducts = () => {
         description: '',
         price: '',
         category: '',
-        image: '',
+        images: [],
         stock: ''
     });
+    const [imageFiles, setImageFiles] = useState([]);
+    const [imagePreviews, setImagePreviews] = useState([]);
+    const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -37,14 +40,69 @@ const AdminProducts = () => {
         }
     };
 
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        setImageFiles(files);
+
+        // Create preview URLs
+        const previews = files.map(file => URL.createObjectURL(file));
+        setImagePreviews(previews);
+    };
+
+    const removeImage = (index) => {
+        const newFiles = imageFiles.filter((_, i) => i !== index);
+        const newPreviews = imagePreviews.filter((_, i) => i !== index);
+        const newImages = formData.images.filter((_, i) => i !== index);
+
+        setImageFiles(newFiles);
+        setImagePreviews(newPreviews);
+        setFormData({ ...formData, images: newImages });
+    };
+
+    const uploadImages = async () => {
+        if (imageFiles.length === 0) return formData.images;
+
+        setUploading(true);
+        const formDataUpload = new FormData();
+        imageFiles.forEach(file => {
+            formDataUpload.append('images', file);
+        });
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:5000/api/products/upload-images', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formDataUpload
+            });
+
+            if (!response.ok) throw new Error('Upload failed');
+
+            const data = await response.json();
+            return [...formData.images, ...data.images];
+        } catch (error) {
+            console.error('Error uploading images:', error);
+            alert('Failed to upload images');
+            return formData.images;
+        } finally {
+            setUploading(false);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // Upload images first
+            const uploadedImages = await uploadImages();
+            const dataToSubmit = { ...formData, images: uploadedImages };
+
             if (editingProduct) {
-                await productsAPI.update(editingProduct._id, formData);
+                await productsAPI.update(editingProduct._id, dataToSubmit);
                 alert('Product updated successfully!');
             } else {
-                await productsAPI.create(formData);
+                await productsAPI.create(dataToSubmit);
                 alert('Product created successfully!');
             }
             setShowModal(false);
@@ -62,9 +120,11 @@ const AdminProducts = () => {
             description: product.description,
             price: product.price,
             category: product.category._id,
-            image: product.image,
+            images: product.images || [],
             stock: product.stock
         });
+        setImageFiles([]);
+        setImagePreviews([]);
         setShowModal(true);
     };
 
@@ -85,9 +145,11 @@ const AdminProducts = () => {
             description: '',
             price: '',
             category: '',
-            image: '',
+            images: [],
             stock: ''
         });
+        setImageFiles([]);
+        setImagePreviews([]);
         setEditingProduct(null);
     };
 
@@ -123,7 +185,7 @@ const AdminProducts = () => {
                                 <tr key={product._id}>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
-                                            <img src={product.image} alt={product.name} className="w-10 h-10 rounded" />
+                                            <img src={product.images?.[0] || 'https://via.placeholder.com/40'} alt={product.name} className="w-10 h-10 rounded object-cover" />
                                             <span className="ml-3">{product.name}</span>
                                         </div>
                                     </td>
@@ -202,13 +264,58 @@ const AdminProducts = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Product Images</label>
                                     <input
-                                        type="text"
-                                        value={formData.image}
-                                        onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                                        type="file"
+                                        multiple
+                                        accept="image/*"
+                                        onChange={handleImageChange}
                                         className="input-field"
                                     />
+                                    <p className="text-xs text-gray-500 mt-1">You can select multiple images (max 10)</p>
+
+                                    {/* Image Previews */}
+                                    <div className="mt-3 grid grid-cols-4 gap-2">
+                                        {/* Existing images from formData */}
+                                        {formData.images.map((img, index) => (
+                                            <div key={`existing-${index}`} className="relative">
+                                                <img
+                                                    src={`http://localhost:5000${img}`}
+                                                    alt={`Product ${index + 1}`}
+                                                    className="w-full h-20 object-cover rounded border"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(index)}
+                                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                        {/* New image previews */}
+                                        {imagePreviews.map((preview, index) => (
+                                            <div key={`preview-${index}`} className="relative">
+                                                <img
+                                                    src={preview}
+                                                    alt={`Preview ${index + 1}`}
+                                                    className="w-full h-20 object-cover rounded border border-blue-300"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const newFiles = imageFiles.filter((_, i) => i !== index);
+                                                        const newPreviews = imagePreviews.filter((_, i) => i !== index);
+                                                        setImageFiles(newFiles);
+                                                        setImagePreviews(newPreviews);
+                                                    }}
+                                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
@@ -221,8 +328,8 @@ const AdminProducts = () => {
                                     />
                                 </div>
                                 <div className="flex space-x-3 pt-4">
-                                    <button type="submit" className="btn-primary flex-1">
-                                        {editingProduct ? 'Update' : 'Create'}
+                                    <button type="submit" className="btn-primary flex-1" disabled={uploading}>
+                                        {uploading ? 'Uploading...' : (editingProduct ? 'Update' : 'Create')}
                                     </button>
                                     <button
                                         type="button"

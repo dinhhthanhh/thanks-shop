@@ -9,8 +9,26 @@ import {
 import { protect } from '../middleware/auth.js';
 import { admin } from '../middleware/admin.js';
 import Product from '../models/Product.js';
+import { uploadProductImages } from '../middleware/upload.js';
 
 const router = express.Router();
+
+// @desc    Upload product images
+// @route   POST /api/products/upload-images
+// @access  Private/Admin
+router.post('/upload-images', protect, admin, uploadProductImages.array('images', 10), (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: 'No files uploaded' });
+        }
+
+        // Return array of image URLs
+        const imageUrls = req.files.map(file => `/uploads/products/${file.filename}`);
+        res.json({ images: imageUrls });
+    } catch (error) {
+        res.status(500).json({ message: 'Upload failed', error: error.message });
+    }
+});
 
 // @desc    Search products
 // @route   GET /api/products/search

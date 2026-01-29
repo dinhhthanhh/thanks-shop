@@ -70,14 +70,14 @@ export const getProductById = async (req, res, next) => {
 // @access  Private/Admin
 export const createProduct = async (req, res, next) => {
     try {
-        const { name, description, price, category, image, stock } = req.body;
+        const { name, description, price, category, images, stock } = req.body;
 
         const product = await Product.create({
             name,
             description,
             price,
             category,
-            image,
+            images: images || [],
             stock
         });
 
@@ -92,7 +92,7 @@ export const createProduct = async (req, res, next) => {
 // @access  Private/Admin
 export const updateProduct = async (req, res, next) => {
     try {
-        const { name, description, price, category, image, stock } = req.body;
+        const { name, description, price, category, images, stock } = req.body;
 
         const product = await Product.findById(req.params.id);
 
@@ -101,7 +101,7 @@ export const updateProduct = async (req, res, next) => {
             product.description = description || product.description;
             product.price = price !== undefined ? price : product.price;
             product.category = category || product.category;
-            product.image = image || product.image;
+            product.images = images || product.images;
             product.stock = stock !== undefined ? stock : product.stock;
 
             const updatedProduct = await product.save();
