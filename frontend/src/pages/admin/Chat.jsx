@@ -354,12 +354,14 @@ const AdminChat = () => {
                                     className={`flex flex-col ${msg.senderType === 'admin' ? 'items-end' : 'items-start'}`}
                                 >
                                     <div
-                                        className={`max-w-[70%] px-4 py-2 rounded-2xl shadow-sm cursor-pointer ${msg.senderType === 'admin'
-                                            ? msg.isAutoReply
-                                                ? 'bg-blue-500 text-white border-2 border-blue-300'
-                                                : 'bg-primary-600 text-white'
-                                            : 'bg-white text-gray-900 border border-gray-200'
-                                            }`}
+                                        className={`max-w-[70%] shadow-sm cursor-pointer ${!msg.message && msg.attachments?.length > 0
+                                            ? 'bg-transparent shadow-none'
+                                            : `px-4 py-2 rounded-2xl ${msg.senderType === 'admin'
+                                                ? msg.isAutoReply
+                                                    ? 'bg-blue-500 text-white border-2 border-blue-300'
+                                                    : 'bg-primary-600 text-white'
+                                                : 'bg-white text-gray-900 border border-gray-200'
+                                            }`}`}
                                         title={new Date(msg.createdAt).toLocaleString('vi-VN', {
                                             day: '2-digit',
                                             month: '2-digit',
@@ -375,7 +377,7 @@ const AdminChat = () => {
 
                                         {/* Display attachments */}
                                         {msg.attachments && msg.attachments.length > 0 && (
-                                            <div className="mt-2 space-y-1">
+                                            <div className={`${msg.message ? 'mt-2' : ''} space-y-1`}>
                                                 {msg.attachments.map((file, i) => (
                                                     <div key={i}>
                                                         {file.mimetype?.startsWith('image/') ? (
