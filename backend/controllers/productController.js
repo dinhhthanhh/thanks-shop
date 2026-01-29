@@ -97,11 +97,11 @@ export const updateProduct = async (req, res, next) => {
         const product = await Product.findById(req.params.id);
 
         if (product) {
-            product.name = name || product.name;
-            product.description = description || product.description;
+            product.name = name !== undefined ? name : product.name;
+            product.description = description !== undefined ? description : product.description;
             product.price = price !== undefined ? price : product.price;
-            product.category = category || product.category;
-            product.images = images || product.images;
+            product.category = category !== undefined ? category : product.category;
+            product.images = images !== undefined ? images : product.images;
             product.stock = stock !== undefined ? stock : product.stock;
 
             const updatedProduct = await product.save();

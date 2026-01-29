@@ -22,6 +22,7 @@ const AdminProducts = () => {
     const [imagePreviews, setImagePreviews] = useState([]);
     const [uploading, setUploading] = useState(false);
     const [imageUrlInput, setImageUrlInput] = useState('');
+    const [uploadMethod, setUploadMethod] = useState('file'); // 'file' or 'url'
 
     useEffect(() => {
         fetchData();
@@ -97,8 +98,8 @@ const AdminProducts = () => {
             if (!response.ok) throw new Error('Upload failed');
 
             const data = await response.json();
-            // Append new images to existing ones
-            return [...formData.images, ...data.images];
+            // Prepend new images so they show up as primary in the list
+            return [...data.images, ...formData.images];
         } catch (error) {
             console.error('Error uploading image:', error);
             alert('Failed to upload image');
@@ -139,6 +140,15 @@ const AdminProducts = () => {
             images: product.images || [],
             stock: product.stock
         });
+
+        // Detect upload method based on existing images
+        const firstImage = product.images?.[0] || '';
+        if (firstImage.startsWith('http')) {
+            setUploadMethod('url');
+        } else {
+            setUploadMethod('file');
+        }
+
         setImageFiles([]);
         setImagePreviews([]);
         setShowModal(true);
@@ -166,6 +176,8 @@ const AdminProducts = () => {
         });
         setImageFiles([]);
         setImagePreviews([]);
+        setImageUrlInput('');
+        setUploadMethod('file');
         setEditingProduct(null);
     };
 
@@ -280,38 +292,89 @@ const AdminProducts = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Product Images</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
 
-                                    {/* Link Input */}
-                                    <div className="flex space-x-2 mb-2">
-                                        <input
-                                            type="text"
-                                            placeholder="Paste image URL here..."
-                                            value={imageUrlInput}
-                                            onChange={(e) => setImageUrlInput(e.target.value)}
-                                            className="input-field flex-1"
-                                        />
+                                    {/* Method Toggle */}
+                                    <div className="flex space-x-6 mb-4 border-b border-gray-100">
                                         <button
                                             type="button"
-                                            onClick={handleAddImageUrl}
-                                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 text-sm font-medium border"
+                                            onClick={() => {
+                                                if (uploadMethod !== 'file') {
+                                                    setUploadMethod('file');
+                                                    setImageUrlInput('');
+                                                    // Optional: clear if user confirms they want to switch mode
+                                                    // setFormData(prev => ({ ...prev, images: [] }));
+                                                }
+                                            }}
+                                            className={`pb-2 text-sm transition-all ${uploadMethod === 'file'
+                                                ? 'border-b-2 border-primary-600 text-primary-600 font-semibold'
+                                                : 'text-gray-400 hover:text-gray-600'}`}
                                         >
-                                            Add URL
+                                            Upload Files
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (uploadMethod !== 'url') {
+                                                    setUploadMethod('url');
+                                                    setImageFiles([]);
+                                                    setImagePreviews([]);
+                                                }
+                                            }}
+                                            className={`pb-2 text-sm transition-all ${uploadMethod === 'url'
+                                                ? 'border-b-2 border-primary-600 text-primary-600 font-semibold'
+                                                : 'text-gray-400 hover:text-gray-600'}`}
+                                        >
+                                            Paste Link
                                         </button>
                                     </div>
 
-                                    {/* File Input */}
-                                    <input
-                                        type="file"
-                                        multiple
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                        className="input-field"
-                                    />
-                                    <p className="text-xs text-gray-500 mt-1">Select files or paste a link above (max 10 images)</p>
+                                    {/* Conditional Inputs */}
+                                    {uploadMethod === 'url' ? (
+                                        <div className="space-y-2 animate-in fade-in duration-300">
+                                            <div className="flex space-x-2">
+                                                <input
+                                                    type="text"
+                                                    placeholder="https://example.com/image.jpg"
+                                                    value={imageUrlInput}
+                                                    onChange={(e) => setImageUrlInput(e.target.value)}
+                                                    className="input-field flex-1"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={handleAddImageUrl}
+                                                    className="px-4 py-2 bg-primary-50 text-primary-700 rounded-lg hover:bg-primary-100 text-sm font-semibold border border-primary-100 transition-colors"
+                                                >
+                                                    Add
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="animate-in fade-in duration-300">
+                                            <input
+                                                type="file"
+                                                multiple
+                                                accept="image/*"
+                                                onChange={handleImageChange}
+                                                className="block w-full text-sm text-gray-500
+                                                    file:mr-4 file:py-2 file:px-4
+                                                    file:rounded-full file:border-0
+                                                    file:text-sm file:font-semibold
+                                                    file:bg-primary-50 file:text-primary-700
+                                                    hover:file:bg-primary-100
+                                                    cursor-pointer border rounded-lg p-1"
+                                            />
+                                        </div>
+                                    )}
+
+                                    <p className="text-[10px] text-gray-400 mt-2">
+                                        {uploadMethod === 'file'
+                                            ? 'Select up to 10 image files to upload'
+                                            : 'Paste a direct link to an image and click Add'}
+                                    </p>
 
                                     {/* Image Previews */}
-                                    <div className="mt-3 grid grid-cols-4 gap-2">
+                                    <div className="mt-4 grid grid-cols-4 gap-3">
                                         {/* Existing images from formData */}
                                         {formData.images.map((img, index) => (
                                             <div key={`existing-${index}`} className="relative group">
