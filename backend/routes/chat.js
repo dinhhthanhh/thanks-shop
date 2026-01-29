@@ -74,19 +74,27 @@ router.post('/:conversationId/messages', protect, async (req, res) => {
         }
 
         console.log('📝 Creating new message for conversation:', req.params.conversationId);
+
+        // Determine if we should trigger auto-reply (if last message was > 1 hour ago)
+        const ONE_HOUR = 60 * 60 * 1000;
+        const isNewSession = !conversation.lastMessageAt || (new Date() - conversation.lastMessageAt > ONE_HOUR);
+        const triggerAutoReply = !isAdmin && (isNewSession || !conversation.hasAutoReplied);
+
         const newMessage = await Message.create({
             conversation: req.params.conversationId,
             sender: req.user._id,
             senderType: isAdmin ? 'admin' : 'user',
-            message: message || (attachments && attachments.length > 0 ? 'Sent an attachment' : 'Empty message'),
+            message: message || '', // Leave empty if no text (for image-only bubbles)
             status: 'delivered',
             attachments: attachments || []
         });
 
         console.log('✅ Message created, updating conversation...');
-        const lastMsgText = message || (attachments && attachments.length > 0 ? 'Sent an attachment' : 'New message');
-        conversation.lastMessage = lastMsgText;
+        // For sidebar/list: show placeholder if text is empty
+        const sidebarText = message || (attachments && attachments.length > 0 ? '[Hình ảnh]' : 'Tin nhắn mới');
+        conversation.lastMessage = sidebarText;
         conversation.lastMessageAt = new Date();
+
         if (!isAdmin) {
             conversation.unreadCount += 1;
         }
@@ -108,7 +116,7 @@ router.post('/:conversationId/messages', protect, async (req, res) => {
                         userName: req.user.name
                     });
 
-                    if (!conversation.hasAutoReplied) {
+                    if (triggerAutoReply) {
                         const settings = await Settings.findOne();
                         if (settings && settings.autoReplyEnabled) {
                             console.log('🤖 Creating auto-reply message');
@@ -146,8 +154,7 @@ router.post('/:conversationId/messages', protect, async (req, res) => {
         console.error('❌ CRITICAL ERROR in POST /messages:', error);
         res.status(500).json({
             message: 'Server error during message sending',
-            error: error.message,
-            stack: process.env.NODE_ENV === 'production' ? null : error.stack
+            error: error.message
         });
     }
 });

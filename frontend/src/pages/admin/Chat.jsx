@@ -371,7 +371,7 @@ const AdminChat = () => {
                                         {msg.isAutoReply && (
                                             <p className="text-[10px] mb-1 opacity-75 italic">{t('admin_chat.auto_reply') || '🤖 Auto-reply'}</p>
                                         )}
-                                        <p className="text-sm leading-relaxed">{msg.message}</p>
+                                        {msg.message && <p className="text-sm leading-relaxed">{msg.message}</p>}
 
                                         {/* Display attachments */}
                                         {msg.attachments && msg.attachments.length > 0 && (
