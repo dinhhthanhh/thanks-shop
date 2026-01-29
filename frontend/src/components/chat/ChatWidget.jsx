@@ -1,3 +1,9 @@
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { io } from 'socket.io-client';
 import { chatAPI } from '../../services/api';
 import { getNormalizedImageUrl } from '../../utils/url';
 

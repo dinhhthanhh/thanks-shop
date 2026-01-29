@@ -1,3 +1,7 @@
+import { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { io } from 'socket.io-client';
 import { chatAPI } from '../../services/api';
 import { getNormalizedImageUrl } from '../../utils/url';
 import Loading from '../../components/common/Loading';
