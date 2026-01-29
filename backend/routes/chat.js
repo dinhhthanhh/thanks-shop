@@ -84,7 +84,8 @@ router.post('/:conversationId/messages', protect, async (req, res) => {
         });
 
         console.log('✅ Message created, updating conversation...');
-        conversation.lastMessage = message || (attachments && attachments.length > 0 ? 'Sent an attachment' : 'Empty message');
+        const lastMsgText = message || (attachments && attachments.length > 0 ? 'Sent an attachment' : 'New message');
+        conversation.lastMessage = lastMsgText;
         conversation.lastMessageAt = new Date();
         if (!isAdmin) {
             conversation.unreadCount += 1;
