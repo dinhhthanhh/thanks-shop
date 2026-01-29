@@ -7,7 +7,6 @@ import { useCart } from '../../context/CartContext';
 import Loading from '../../components/common/Loading';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import { formatPrice } from '../../utils/currency';
-import ImageCarousel from '../../components/products/ImageCarousel';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -86,9 +85,13 @@ const ProductDetail = () => {
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Product Images Carousel */}
-                <div>
-                    <ImageCarousel images={product.images || []} />
+                {/* Product Image */}
+                <div className="aspect-w-1 aspect-h-1">
+                    <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-96 object-cover rounded-lg shadow-md"
+                    />
                 </div>
 
                 {/* Product Info */}

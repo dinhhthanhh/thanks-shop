@@ -5,7 +5,6 @@ import Loading from '../../components/common/Loading';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import { useTranslation } from 'react-i18next';
 import { formatPrice } from '../../utils/currency';
-import { getImageURL } from '../../utils/url';
 
 const Cart = () => {
     const [cart, setCart] = useState(null);
@@ -78,7 +77,7 @@ const Cart = () => {
                         {cart.items.map((item) => (
                             <div key={item.product._id} className="bg-white p-4 rounded-lg shadow-md flex gap-4">
                                 <img
-                                    src={getImageURL(item.product.images?.[0])}
+                                    src={item.product.image}
                                     alt={item.product.name}
                                     className="w-24 h-24 object-cover rounded"
                                 />

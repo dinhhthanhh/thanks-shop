@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { productsAPI, categoriesAPI } from '../../services/api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import Loading from '../../components/common/Loading';
-import { getBaseURL, getAPIURL } from '../../utils/url';
 
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
@@ -71,7 +70,7 @@ const AdminProducts = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${getAPIURL()}/products/upload-images`, {
+            const response = await fetch('http://localhost:5000/api/products/upload-images', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -281,7 +280,7 @@ const AdminProducts = () => {
                                         {formData.images.map((img, index) => (
                                             <div key={`existing-${index}`} className="relative">
                                                 <img
-                                                    src={`${getBaseURL()}${img}`}
+                                                    src={`http://localhost:5000${img}`}
                                                     alt={`Product ${index + 1}`}
                                                     className="w-full h-20 object-cover rounded border"
                                                 />
