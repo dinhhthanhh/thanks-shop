@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { productsAPI, categoriesAPI } from '../../services/api';
+import { getNormalizedImageUrl } from '../../utils/url';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import Loading from '../../components/common/Loading';
 
@@ -14,7 +15,7 @@ const AdminProducts = () => {
         description: '',
         price: '',
         category: '',
-        image: '',
+        images: [],
         stock: ''
     });
     const [imageFiles, setImageFiles] = useState([]);
@@ -50,23 +51,15 @@ const AdminProducts = () => {
     };
 
     const removeImage = (index) => {
-        const newFiles = imageFiles.filter((_, i) => i !== index);
-        const newPreviews = imagePreviews.filter((_, i) => i !== index);
-
-        setImageFiles(newFiles);
-        setImagePreviews(newPreviews);
-        // If removing the only/first image, clear the image field
-        if (index === 0) {
-            setFormData({ ...formData, image: '' });
-        }
+        const newImages = formData.images.filter((_, i) => i !== index);
+        setFormData({ ...formData, images: newImages });
     };
 
     const uploadImages = async () => {
-        if (imageFiles.length === 0) return formData.image;
+        if (imageFiles.length === 0) return formData.images;
 
         setUploading(true);
         const formDataUpload = new FormData();
-        // Upload all selected images
         imageFiles.forEach(file => {
             formDataUpload.append('images', file);
         });
@@ -85,12 +78,12 @@ const AdminProducts = () => {
             if (!response.ok) throw new Error('Upload failed');
 
             const data = await response.json();
-            // Only return the first image URL since backend model only supports single image
-            return data.images[0] || formData.image;
+            // Append new images to existing ones
+            return [...formData.images, ...data.images];
         } catch (error) {
             console.error('Error uploading image:', error);
             alert('Failed to upload image');
-            return formData.image;
+            return formData.images;
         } finally {
             setUploading(false);
         }
@@ -99,9 +92,8 @@ const AdminProducts = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Upload images first and get the first image URL
-            const uploadedImage = await uploadImages();
-            const dataToSubmit = { ...formData, image: uploadedImage };
+            const uploadedImages = await uploadImages();
+            const dataToSubmit = { ...formData, images: uploadedImages };
 
             if (editingProduct) {
                 await productsAPI.update(editingProduct._id, dataToSubmit);
@@ -125,7 +117,7 @@ const AdminProducts = () => {
             description: product.description,
             price: product.price,
             category: product.category._id,
-            image: product.image || '',
+            images: product.images || [],
             stock: product.stock
         });
         setImageFiles([]);
@@ -150,7 +142,7 @@ const AdminProducts = () => {
             description: '',
             price: '',
             category: '',
-            image: '',
+            images: [],
             stock: ''
         });
         setImageFiles([]);
@@ -190,7 +182,7 @@ const AdminProducts = () => {
                                 <tr key={product._id}>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
-                                            <img src={product.images?.[0] || 'https://via.placeholder.com/40'} alt={product.name} className="w-10 h-10 rounded object-cover" />
+                                            <img src={getNormalizedImageUrl(product.images?.[0])} alt={product.name} className="w-10 h-10 rounded object-cover" />
                                             <span className="ml-3">{product.name}</span>
                                         </div>
                                     </td>
@@ -285,7 +277,7 @@ const AdminProducts = () => {
                                         {formData.images.map((img, index) => (
                                             <div key={`existing-${index}`} className="relative">
                                                 <img
-                                                    src={`http://localhost:5000${img}`}
+                                                    src={getNormalizedImageUrl(img)}
                                                     alt={`Product ${index + 1}`}
                                                     className="w-full h-20 object-cover rounded border"
                                                 />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { settingsAPI } from '../../services/api';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 
@@ -12,11 +12,7 @@ const Settings = () => {
     const handleThemeChange = async (newTheme) => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            await axios.put('http://localhost:5000/api/settings',
-                { activeTheme: newTheme },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await settingsAPI.updateTheme(newTheme);
             setTheme(newTheme);
             setMessage('Theme updated successfully!');
             setTimeout(() => setMessage(''), 3000);
@@ -49,8 +45,8 @@ const Settings = () => {
                             onClick={() => handleThemeChange(key)}
                             disabled={loading}
                             className={`relative group p-6 rounded-2xl border-2 transition-all duration-300 text-left ${theme === key
-                                    ? 'border-primary-600 bg-primary-50/30'
-                                    : 'border-gray-100 hover:border-primary-200 bg-white'
+                                ? 'border-primary-600 bg-primary-50/30'
+                                : 'border-gray-100 hover:border-primary-200 bg-white'
                                 }`}
                         >
                             <div className="flex justify-between items-start mb-4">

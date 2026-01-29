@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { couponAPI } from '../../services/api';
 import { useTranslation } from 'react-i18next';
 
 const Coupons = () => {
@@ -21,10 +21,7 @@ const Coupons = () => {
 
     const fetchCoupons = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/api/coupons', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await couponAPI.getAll();
             setCoupons(response.data);
         } catch (error) {
             console.error('Error fetching coupons:', error);
@@ -36,10 +33,7 @@ const Coupons = () => {
     const handleAddCoupon = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/coupons', newCoupon, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await couponAPI.create(newCoupon);
             setShowAddForm(false);
             fetchCoupons();
         } catch (error) {
@@ -50,10 +44,7 @@ const Coupons = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this coupon?')) return;
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:5000/api/coupons/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await couponAPI.delete(id);
             fetchCoupons();
         } catch (error) {
             console.error('Error deleting coupon:', error);

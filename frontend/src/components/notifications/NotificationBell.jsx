@@ -4,10 +4,9 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 
-import { io } from 'socket.io-client';
+import { notificationAPI } from '../../services/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '');
 
 const NotificationBell = () => {
     const [notifications, setNotifications] = useState([]);
@@ -43,10 +42,7 @@ const NotificationBell = () => {
 
     const fetchNotifications = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/notifications`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await notificationAPI.getAll();
             setNotifications(response.data.notifications.slice(0, 5)); // Latest 5
             setUnreadCount(response.data.unreadCount);
         } catch (error) {
@@ -56,10 +52,7 @@ const NotificationBell = () => {
 
     const markAsRead = async (id) => {
         try {
-            const token = localStorage.getItem('token');
-            await axios.patch(`${API_URL}/notifications/${id}/read`, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await notificationAPI.markAsRead(id);
             fetchNotifications();
         } catch (error) {
             console.error('Failed to mark as read:', error);

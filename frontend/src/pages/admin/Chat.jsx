@@ -1,12 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
-import { useTranslation } from 'react-i18next';
-import { io } from 'socket.io-client';
+import { chatAPI } from '../../services/api';
+import { getNormalizedImageUrl } from '../../utils/url';
 import Loading from '../../components/common/Loading';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '');
 
 const AdminChat = () => {
     const [conversations, setConversations] = useState([]);
@@ -135,10 +131,7 @@ const AdminChat = () => {
 
     const fetchConversations = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/chat/admin/conversations`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await chatAPI.getAdminConversations();
             setConversations(response.data);
             setLoading(false);
         } catch (error) {
@@ -149,10 +142,7 @@ const AdminChat = () => {
 
     const fetchMessages = async (id) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/chat/${id}/messages`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await chatAPI.getMessages(id);
             setMessages(response.data);
         } catch (error) {
             console.error('Failed to fetch messages:', error);
@@ -162,10 +152,7 @@ const AdminChat = () => {
     const markAsRead = async (id) => {
         try {
             console.log('📖 [Admin] Calling markAsRead for conversation:', id);
-            const token = localStorage.getItem('token');
-            const response = await axios.patch(`${API_URL}/chat/${id}/read`, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await chatAPI.markAsRead(id);
             console.log('✅ [Admin] MarkAsRead response:', response.data);
             setConversations(prev => prev.map(c => c._id === id ? { ...c, unreadCount: 0 } : c));
         } catch (error) {
@@ -200,16 +187,7 @@ const AdminChat = () => {
         formData.append('file', selectedFile);
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post(`${API_URL}/chat/upload`, formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                },
-                onUploadProgress: (e) => {
-                    setUploadProgress(Math.round((e.loaded * 100) / e.total));
-                }
-            });
+            const response = await chatAPI.upload(formData);
             return response.data;
         } catch (error) {
             console.error('Failed to upload file:', error);
@@ -230,12 +208,7 @@ const AdminChat = () => {
                 if (uploaded) attachments.push(uploaded);
             }
 
-            const token = localStorage.getItem('token');
-            const response = await axios.post(
-                `${API_URL}/chat/${activeConversation._id}/messages`,
-                { message: newMessage, attachments },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            const response = await chatAPI.sendMessage(activeConversation._id, { message: newMessage, attachments });
 
             // Add the new message to the messages list immediately
             setMessages(prev => {
@@ -382,14 +355,14 @@ const AdminChat = () => {
                                                     <div key={i}>
                                                         {file.mimetype?.startsWith('image/') ? (
                                                             <img
-                                                                src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${file.url}`}
+                                                                src={getNormalizedImageUrl(file.url)}
                                                                 alt={file.filename}
                                                                 className="rounded-lg max-w-full cursor-pointer hover:opacity-90 max-h-64 object-cover"
-                                                                onClick={() => window.open(`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${file.url}`, '_blank')}
+                                                                onClick={() => window.open(getNormalizedImageUrl(file.url), '_blank')}
                                                             />
                                                         ) : (
                                                             <a
-                                                                href={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${file.url}`}
+                                                                href={getNormalizedImageUrl(file.url)}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 className="flex items-center space-x-2 text-xs underline hover:no-underline"

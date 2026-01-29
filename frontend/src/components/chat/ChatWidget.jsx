@@ -1,13 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { io } from 'socket.io-client';
+import { chatAPI } from '../../services/api';
+import { getNormalizedImageUrl } from '../../utils/url';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '');
 
 const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -103,10 +97,7 @@ const ChatWidget = () => {
 
     const initConversation = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/chat/conversation`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await chatAPI.getConversation();
             setConversation(response.data);
             fetchMessages(response.data._id);
             markAsRead(response.data._id); // Mark messages as read when opening chat
@@ -117,10 +108,7 @@ const ChatWidget = () => {
 
     const fetchMessages = async (conversationId) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/chat/${conversationId}/messages`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await chatAPI.getMessages(conversationId);
             setMessages(response.data);
         } catch (error) {
             console.error('Failed to fetch messages:', error);
@@ -130,12 +118,7 @@ const ChatWidget = () => {
     const markAsRead = async (conversationId) => {
         try {
             console.log('📖 [Customer] Calling markAsRead for conversation:', conversationId);
-            const token = localStorage.getItem('token');
-            const response = await axios.patch(
-                `${API_URL}/chat/${conversationId}/read`,
-                {},
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            const response = await chatAPI.markAsRead(conversationId);
             console.log('✅ [Customer] MarkAsRead response:', response.data);
         } catch (error) {
             console.error('❌ [Customer] Failed to mark as read:', error);
@@ -172,17 +155,7 @@ const ChatWidget = () => {
         formData.append('file', selectedFile);
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post(`${API_URL}/chat/upload`, formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                },
-                onUploadProgress: (progressEvent) => {
-                    const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                    setUploadProgress(progress);
-                }
-            });
+            const response = await chatAPI.upload(formData);
             return response.data;
         } catch (error) {
             console.error('Failed to upload file:', error);
@@ -222,12 +195,7 @@ const ChatWidget = () => {
             };
             setMessages(prev => [...prev, optimisticMessage]);
 
-            const token = localStorage.getItem('token');
-            const response = await axios.post(
-                `${API_URL}/chat/${conversation._id}/messages`,
-                { message: newMessage, attachments },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            const response = await chatAPI.sendMessage(conversation._id, { message: newMessage, attachments });
 
             // Update optimistic message with server response
             setMessages(prev => prev.map(m =>
@@ -362,14 +330,14 @@ const ChatWidget = () => {
                                                     <div key={i}>
                                                         {file.mimetype?.startsWith('image/') ? (
                                                             <img
-                                                                src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${file.url}`}
+                                                                src={getNormalizedImageUrl(file.url)}
                                                                 alt={file.filename}
                                                                 className="rounded-lg max-w-full cursor-pointer hover:opacity-90"
-                                                                onClick={() => window.open(`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${file.url}`, '_blank')}
+                                                                onClick={() => window.open(getNormalizedImageUrl(file.url), '_blank')}
                                                             />
                                                         ) : (
                                                             <a
-                                                                href={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${file.url}`}
+                                                                href={getNormalizedImageUrl(file.url)}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 className="flex items-center space-x-2 text-xs underline hover:no-underline"

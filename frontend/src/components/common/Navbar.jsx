@@ -5,11 +5,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import NotificationBell from '../notifications/NotificationBell';
-import { io } from 'socket.io-client';
-import axios from 'axios';
+import { chatAPI } from '../../services/api';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '');
 
 const Navbar = () => {
     const { user, logout, isAdmin } = useAuth();
@@ -24,10 +22,7 @@ const Navbar = () => {
     const fetchUnreadCount = async () => {
         if (!isAdmin) return;
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/chat/admin/unread-count`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await chatAPI.getUnreadCount();
             setAdminUnreadCount(response.data.unreadCount);
         } catch (error) {
             console.error('Failed to fetch unread count:', error);

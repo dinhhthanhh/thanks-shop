@@ -23,7 +23,7 @@ const productSchema = new mongoose.Schema({
     },
     images: {
         type: [String],
-        default: ['https://via.placeholder.com/400x400?text=Product+Image']
+        default: ['https://placehold.co/400x400?text=Product+Image']
     },
     stock: {
         type: Number,

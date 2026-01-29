@@ -80,6 +80,35 @@ export const ordersAPI = {
     getById: (id) => api.get(`/orders/${id}`),
 };
 
+// Chat API
+export const chatAPI = {
+    getConversation: () => api.get('/chat/conversation'),
+    getAdminConversations: () => api.get('/chat/admin/conversations'),
+    getMessages: (conversationId) => api.get(`/chat/${conversationId}/messages`),
+    sendMessage: (conversationId, data) => api.post(`/chat/${conversationId}/messages`, data),
+    markAsRead: (conversationId) => api.patch(`/chat/${conversationId}/read`),
+    upload: (formData) => api.post('/chat/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+};
+
+// Settings API
+export const settingsAPI = {
+    updateTheme: (newTheme) => api.put('/settings', { activeTheme: newTheme }),
+};
+
+// Coupons API
+export const couponAPI = {
+    getAll: () => api.get('/coupons'),
+    create: (data) => api.post('/coupons', data),
+    delete: (id) => api.delete(`/coupons/${id}`),
+};
+
+export const notificationAPI = {
+    getAll: () => api.get('/notifications'),
+    markAsRead: (id) => api.patch(`/notifications/${id}/read`),
+};
+
 // Admin API
 export const adminAPI = {
     getAllOrders: () => api.get('/admin/orders'),
