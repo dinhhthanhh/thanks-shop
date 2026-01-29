@@ -77,13 +77,13 @@ router.post('/:conversationId/messages', protect, async (req, res) => {
             conversation: req.params.conversationId,
             sender: req.user._id,
             senderType: isAdmin ? 'admin' : 'user',
-            message,
+            message: message || (attachments && attachments.length > 0 ? 'Sent an attachment' : ''),
             status: 'delivered',
             attachments: attachments || []
         });
 
         // Update conversation
-        conversation.lastMessage = message;
+        conversation.lastMessage = message || 'Sent an attachment';
         conversation.lastMessageAt = new Date();
         if (!isAdmin) {
             conversation.unreadCount += 1;
@@ -93,49 +93,60 @@ router.post('/:conversationId/messages', protect, async (req, res) => {
         await newMessage.populate('sender', 'name');
 
         // Emit real-time event
-        const io = req.app.get('socketio');
-        io.to(req.params.conversationId).emit('new_message', newMessage);
+        try {
+            const io = req.app.get('socketio') || req.app.get('io');
+            if (io) {
+                console.log('📡 Emitting new_message to room:', req.params.conversationId);
+                io.to(req.params.conversationId).emit('new_message', newMessage);
 
-        // Notify Admin specifically if user is sending
-        if (!isAdmin) {
-            io.emit('new_admin_message', {
-                conversationId: req.params.conversationId,
-                message: newMessage,
-                userName: req.user.name
-            });
-
-            // Send auto-reply if this is the first user message and admin hasn't replied yet
-            if (!conversation.hasAutoReplied) {
-                const settings = await Settings.findOne();
-                if (settings && settings.autoReplyEnabled) {
-                    const autoReplyMsg = await Message.create({
-                        conversation: req.params.conversationId,
-                        sender: req.user._id, // Use a system user or admin if available
-                        senderType: 'admin',
-                        message: settings.autoReplyMessage,
-                        isAutoReply: true,
-                        status: 'delivered'
+                // Notify Admin specifically if user is sending
+                if (!isAdmin) {
+                    console.log('📡 Notifying admin of new message');
+                    io.emit('new_admin_message', {
+                        conversationId: req.params.conversationId,
+                        message: newMessage,
+                        userName: req.user.name
                     });
 
-                    await autoReplyMsg.populate('sender', 'name');
-                    conversation.hasAutoReplied = true;
-                    conversation.lastMessage = settings.autoReplyMessage;
-                    await conversation.save();
+                    // Send auto-reply logic...
+                    if (!conversation.hasAutoReplied) {
+                        const settings = await Settings.findOne();
+                        if (settings && settings.autoReplyEnabled) {
+                            const autoReplyMsg = await Message.create({
+                                conversation: req.params.conversationId,
+                                sender: req.user._id,
+                                senderType: 'admin',
+                                message: settings.autoReplyMessage,
+                                isAutoReply: true,
+                                status: 'delivered'
+                            });
 
-                    // Emit auto-reply
-                    setTimeout(() => {
-                        io.to(req.params.conversationId).emit('new_message', autoReplyMsg);
-                    }, 1000);
+                            await autoReplyMsg.populate('sender', 'name');
+                            conversation.hasAutoReplied = true;
+                            conversation.lastMessage = settings.autoReplyMessage;
+                            await conversation.save();
+
+                            setTimeout(() => {
+                                console.log('🤖 Sending auto-reply');
+                                io.to(req.params.conversationId).emit('new_message', autoReplyMsg);
+                            }, 1000);
+                        }
+                    }
+                } else {
+                    conversation.hasAutoReplied = true;
+                    await conversation.save();
                 }
+            } else {
+                console.warn('⚠️ Socket.io instance not found in app context');
             }
-        } else {
-            // Admin replied, reset hasAutoReplied flag
-            conversation.hasAutoReplied = true;
-            await conversation.save();
+        } catch (socketError) {
+            console.error('❌ Socket emission error:', socketError);
+            // Don't fail the whole request if only socket fails
         }
 
         res.status(201).json(newMessage);
     } catch (error) {
+        console.error('❌ Error in send message route:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
