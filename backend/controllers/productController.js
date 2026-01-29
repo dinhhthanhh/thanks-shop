@@ -78,6 +78,7 @@ export const createProduct = async (req, res, next) => {
             price,
             category,
             images: images || [],
+            image: images && images.length > 0 ? images[0] : (images || [])[0],
             stock
         });
 
@@ -102,6 +103,7 @@ export const updateProduct = async (req, res, next) => {
             product.price = price !== undefined ? price : product.price;
             product.category = category !== undefined ? category : product.category;
             product.images = images !== undefined ? images : product.images;
+            product.image = product.images && product.images.length > 0 ? product.images[0] : undefined;
             product.stock = stock !== undefined ? stock : product.stock;
 
             const updatedProduct = await product.save();

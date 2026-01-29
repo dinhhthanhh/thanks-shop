@@ -25,6 +25,10 @@ const productSchema = new mongoose.Schema({
         type: [String],
         default: ['https://placehold.co/400x400?text=Product+Image']
     },
+    image: {
+        type: String,
+        default: 'https://placehold.co/400x400?text=Product+Image'
+    },
     stock: {
         type: Number,
         required: true,
