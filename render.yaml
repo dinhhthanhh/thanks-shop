@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: thanks-shop
+    env: docker
+    repo: https://github.com/dinhhthanhh/thanks-shop
+    rootDir: backend
+    plan: free
+
+  - type: static
+    name: thanks-shop-frontend
+    repo: https://github.com/dinhhthanhh/thanks-shop
+    rootDir: frontend
+    buildCommand: npm run build
+    publishDir: dist
+    routes:
+      - source: /*
+        destination: /index.html
