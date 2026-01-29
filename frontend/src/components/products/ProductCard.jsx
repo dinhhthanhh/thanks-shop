@@ -6,8 +6,8 @@ import { getNormalizedImageUrl } from '../../utils/url';
 const ProductCard = ({ product }) => {
     const { i18n } = useTranslation();
 
-    // Get first image or fallback to placeholder
-    const imageUrl = getNormalizedImageUrl(product.images?.[0] || product.image);
+    // Get image: prioritize singular 'image' which seems to be the primary field after revert
+    const imageUrl = getNormalizedImageUrl(product.image || product.images?.[0]);
 
     return (
         <Link to={`/products/${product._id}`} className="card group">

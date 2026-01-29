@@ -182,7 +182,7 @@ const AdminProducts = () => {
                                 <tr key={product._id}>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
-                                            <img src={getNormalizedImageUrl(product.images?.[0])} alt={product.name} className="w-10 h-10 rounded object-cover" />
+                                            <img src={getNormalizedImageUrl(product.image || product.images?.[0])} alt={product.name} className="w-10 h-10 rounded object-cover" />
                                             <span className="ml-3">{product.name}</span>
                                         </div>
                                     </td>
