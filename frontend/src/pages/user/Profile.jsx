@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { authAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import ErrorMessage from '../../components/common/ErrorMessage';
 
 const Profile = () => {
     const { user, updateUser } = useAuth();
+    const { t } = useTranslation();
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
     const [password, setPassword] = useState('');
@@ -19,12 +21,12 @@ const Profile = () => {
         setSuccess('');
 
         if (password && password !== confirmPassword) {
-            setError('Passwords do not match');
+            setError(t('auth.passwords_not_match'));
             return;
         }
 
         if (password && password.length < 6) {
-            setError('Password must be at least 6 characters');
+            setError(t('auth.password_too_short'));
             return;
         }
 
@@ -37,7 +39,7 @@ const Profile = () => {
             const { token, ...userData } = response.data;
 
             updateUser(userData);
-            setSuccess('Profile updated successfully!');
+            setSuccess(t('profile.update_success'));
             setPassword('');
             setConfirmPassword('');
         } catch (error) {
@@ -49,7 +51,7 @@ const Profile = () => {
 
     return (
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">My Profile</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('profile.title')}</h1>
 
             <div className="bg-white p-8 rounded-lg shadow-md">
                 {error && <ErrorMessage message={error} />}
@@ -62,7 +64,7 @@ const Profile = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                            Full Name
+                            {t('auth.full_name_label')}
                         </label>
                         <input
                             id="name"
@@ -76,7 +78,7 @@ const Profile = () => {
 
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                            Email Address
+                            {t('auth.email_label')}
                         </label>
                         <input
                             id="email"
@@ -89,15 +91,15 @@ const Profile = () => {
                     </div>
 
                     <div className="border-t pt-6">
-                        <h3 className="text-lg font-medium text-gray-900 mb-4">Change Password</h3>
+                        <h3 className="text-lg font-medium text-gray-900 mb-4">{t('profile.change_password')}</h3>
                         <p className="text-sm text-gray-500 mb-4">
-                            Leave blank if you don't want to change your password
+                            {t('profile.leave_blank')}
                         </p>
 
                         <div className="space-y-4">
                             <div>
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                    New Password
+                                    {t('profile.new_password_label')}
                                 </label>
                                 <input
                                     id="password"
@@ -105,13 +107,13 @@ const Profile = () => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="input-field mt-1"
-                                    placeholder="Enter new password"
+                                    placeholder={t('profile.new_password_placeholder')}
                                 />
                             </div>
 
                             <div>
                                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                                    Confirm New Password
+                                    {t('profile.confirm_new_password_label')}
                                 </label>
                                 <input
                                     id="confirmPassword"
@@ -119,14 +121,14 @@ const Profile = () => {
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     className="input-field mt-1"
-                                    placeholder="Confirm new password"
+                                    placeholder={t('profile.confirm_new_password_placeholder')}
                                 />
                             </div>
                         </div>
                     </div>
 
                     <button type="submit" disabled={loading} className="btn-primary w-full">
-                        {loading ? 'Updating...' : 'Update Profile'}
+                        {loading ? t('profile.updating') : t('profile.update_button')}
                     </button>
                 </form>
             </div>

@@ -5,7 +5,7 @@
         "cart": "Cart",
         "orders": "Orders",
         "admin": "Admin",
-        "admin_chat": "Admin Chat",
+        "admin_chat": "Support Chat",
         "profile": "Profile",
         "logout": "Logout",
         "login": "Login",
@@ -18,8 +18,46 @@
         "explore_more": "Explore More",
         "featured_products": "Featured Products",
         "featured_subtitle": "Discover our most popular household cleaning products",
-        "view_all": "View All Products",
-        "shop_by_category": "Shop by Category"
+        "view_all": "View all products",
+        "shop_by_category": "Shop by category",
+        "our_collection": "Our Collection",
+        "explore_items": "Explore Items"
+    },
+    "auth": {
+        "welcome_back": "Welcome Back",
+        "sign_in_subtitle": "Sign in to your premium account",
+        "email_label": "Email Address",
+        "email_placeholder": "Enter your email",
+        "password_label": "Password",
+        "password_placeholder": "Enter your password",
+        "sign_in_button": "Sign In",
+        "signing_in": "Signing In...",
+        "no_account": "Don't have an account?",
+        "sign_up_link": "Sign up",
+        "create_account_title": "Create Account",
+        "join_us": "Join Thanks-Shop today",
+        "full_name_label": "Full Name",
+        "full_name_placeholder": "Enter your name",
+        "confirm_password_label": "Confirm Password",
+        "confirm_password_placeholder": "Confirm your password",
+        "create_account_button": "Create Account",
+        "creating_account": "Creating Account...",
+        "have_account": "Already have an account?",
+        "sign_in_link": "Sign in",
+        "passwords_not_match": "Passwords do not match",
+        "password_too_short": "Password must be at least 6 characters"
+    },
+    "profile": {
+        "title": "My Profile",
+        "update_success": "Profile updated successfully!",
+        "change_password": "Change Password",
+        "leave_blank": "Leave blank if you don't want to change your password",
+        "new_password_label": "New Password",
+        "new_password_placeholder": "Enter new password",
+        "confirm_new_password_label": "Confirm New Password",
+        "confirm_new_password_placeholder": "Confirm new password",
+        "update_button": "Update Profile",
+        "updating": "Updating..."
     },
     "products": {
         "filters": "Filters",
@@ -37,12 +75,12 @@
         "buy_now": "Buy Now"
     },
     "search": {
-        "placeholder": "Search for products...",
+        "placeholder": "Search products...",
         "results_for": "Search results for",
         "products_found": "products found",
         "no_results": "No products found",
-        "try_different": "Try a different search term",
-        "browse_all": "Browse All Products"
+        "try_different": "Try different keywords",
+        "browse_all": "Browse all products"
     },
     "notifications": {
         "title": "Notifications",
@@ -50,23 +88,38 @@
     },
     "chat": {
         "support": "Customer Support",
-        "online": "We're here to help",
+        "online": "We are always here to help",
         "type_message": "Type a message...",
         "attach_file": "Attach file",
         "file_too_large": "File size must be less than 5MB",
-        "upload_failed": "File upload failed",
-        "back_home": "Back to home",
-        "auto_reply": "Auto-reply"
+        "upload_failed": "Upload failed",
+        "back_home": "Back to Home",
+        "auto_reply": "Auto Reply"
     },
     "admin_chat": {
         "title": "Customer Support",
-        "no_conversations": "No active conversations",
+        "no_conversations": "No conversations found",
         "start_conversation": "No messages yet",
         "select_to_start": "Select a customer to start chatting",
-        "type_placeholder": "Type your message here...",
+        "type_placeholder": "Type your message...",
         "search_customers": "Search customers...",
         "search_messages": "Search messages...",
         "no_results": "No customers found",
         "auto_reply": "🤖 Auto-reply"
+    },
+    "footer": {
+        "about_title": "About Thanks-Shop",
+        "about_text": "Your one-stop shop for all household cleaning products. Quality products, affordable prices.",
+        "quick_links": "Quick Links",
+        "contact_us": "Contact Us",
+        "all_rights": "All rights reserved."
+    },
+    "product_detail": {
+        "category": "Category",
+        "stock": "Stock",
+        "quantity": "Quantity",
+        "available": "available",
+        "not_found": "Product not found",
+        "added_to_cart": "Product added to cart!"
     }
 }

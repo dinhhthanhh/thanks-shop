@@ -67,7 +67,7 @@ const Home = () => {
             {/* Featured Products */}
             <div id="featured" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
                 <div className="text-center mb-16">
-                    <span className="text-primary-600 font-bold tracking-widest uppercase text-sm mb-4 block">Our Collection</span>
+                    <span className="text-primary-600 font-bold tracking-widest uppercase text-sm mb-4 block">{t('home.our_collection')}</span>
                     <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 font-primary">
                         {t('home.featured_products')}
                     </h2>
@@ -103,7 +103,7 @@ const Home = () => {
                             >
                                 <div className="absolute top-0 left-0 w-full h-1 bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
                                 <h3 className="font-bold text-gray-800 group-hover:text-primary-600 transition-colors text-lg tracking-tight">{category}</h3>
-                                <p className="text-xs text-gray-400 mt-2 uppercase tracking-widest font-semibold">Explore Items</p>
+                                <p className="text-xs text-gray-400 mt-2 uppercase tracking-widest font-semibold">{t('home.explore_items')}</p>
                             </Link>
                         ))}
                     </div>

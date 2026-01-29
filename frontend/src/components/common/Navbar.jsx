@@ -76,10 +76,6 @@ const Navbar = () => {
                             {t('navbar.products')}
                         </Link>
 
-                        <div className="h-6 w-px bg-gray-200"></div>
-                        <LanguageSwitcher />
-                        <div className="h-6 w-px bg-gray-200"></div>
-
                         {user ? (
                             <div className="flex items-center space-x-6">
                                 <Link to="/cart" className="relative text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors uppercase tracking-wider">
@@ -108,6 +104,9 @@ const Navbar = () => {
                                         </Link>
                                     </>
                                 )}
+
+                                <div className="h-6 w-px bg-gray-100 mx-1"></div>
+                                <LanguageSwitcher />
 
                                 {!isAdmin && <NotificationBell />}
 
@@ -143,6 +142,8 @@ const Navbar = () => {
                                 <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors uppercase tracking-wider">
                                     {t('navbar.login')}
                                 </Link>
+                                <div className="h-6 w-px bg-gray-100 mx-1"></div>
+                                <LanguageSwitcher />
                                 <Link to="/register" className="btn-primary px-5! py-2! text-xs! uppercase! tracking-widest!">
                                     {t('navbar.register')}
                                 </Link>

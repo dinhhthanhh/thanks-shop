@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import ErrorMessage from '../../components/common/ErrorMessage';
 
@@ -10,6 +11,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,8 +33,8 @@ const Login = () => {
             <div className="max-w-md w-full space-y-8">
                 <div className="text-center">
                     <img src="/thanksshop-logo.svg" alt="Thanks-Shop" className="h-20 w-20 mx-auto mb-6 drop-shadow-xl animate-fade-in" />
-                    <h2 className="text-4xl font-black text-gray-900 tracking-tight italic">Welcome Back</h2>
-                    <p className="mt-3 text-gray-500 font-medium tracking-wide">Sign in to your premium account</p>
+                    <h2 className="text-4xl font-black text-gray-900 tracking-tight italic">{t('auth.welcome_back')}</h2>
+                    <p className="mt-3 text-gray-500 font-medium tracking-wide">{t('auth.sign_in_subtitle')}</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-md">
@@ -40,7 +42,7 @@ const Login = () => {
 
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                            Email Address
+                            {t('auth.email_label')}
                         </label>
                         <input
                             id="email"
@@ -49,13 +51,13 @@ const Login = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="input-field mt-1"
-                            placeholder="Enter your email"
+                            placeholder={t('auth.email_placeholder')}
                         />
                     </div>
 
                     <div>
                         <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                            Password
+                            {t('auth.password_label')}
                         </label>
                         <input
                             id="password"
@@ -64,18 +66,18 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="input-field mt-1"
-                            placeholder="Enter your password"
+                            placeholder={t('auth.password_placeholder')}
                         />
                     </div>
 
                     <button type="submit" disabled={loading} className="btn-primary w-full">
-                        {loading ? 'Signing In...' : 'Sign In'}
+                        {loading ? t('auth.signing_in') : t('auth.sign_in_button')}
                     </button>
 
                     <p className="text-center text-sm text-gray-600">
-                        Don't have an account?{' '}
+                        {t('auth.no_account')}{' '}
                         <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500">
-                            Sign up
+                            {t('auth.sign_up_link')}
                         </Link>
                     </p>
                 </form>

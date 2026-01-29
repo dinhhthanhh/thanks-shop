@@ -32,7 +32,7 @@ const ProductDetail = () => {
             setProduct(response.data);
         } catch (error) {
             console.error('Error fetching product:', error);
-            setError('Product not found');
+            setError(t('product_detail.not_found'));
         } finally {
             setLoading(false);
         }
@@ -49,7 +49,7 @@ const ProductDetail = () => {
         try {
             const result = await addToCartContext(product._id, quantity);
             if (result.success) {
-                alert('Product added to cart!');
+                alert(t('product_detail.added_to_cart'));
                 setQuantity(1);
             } else {
                 setError(result.message);
@@ -100,7 +100,7 @@ const ProductDetail = () => {
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
                         <p className="text-sm text-gray-500">
-                            Category: {product.category?.name}
+                            {t('product_detail.category')}: {product.category?.name}
                         </p>
                     </div>
 
@@ -114,11 +114,11 @@ const ProductDetail = () => {
 
                     <div className="space-y-4">
                         <div className="flex items-center space-x-2">
-                            <span className="text-sm font-medium text-gray-700">Stock:</span>
+                            <span className="text-sm font-medium text-gray-700">{t('product_detail.stock')}:</span>
                             {product.stock > 0 ? (
-                                <span className="text-green-600 font-semibold">{product.stock} available</span>
+                                <span className="text-green-600 font-semibold">{product.stock} {t('product_detail.available')}</span>
                             ) : (
-                                <span className="text-red-600 font-semibold">Out of stock</span>
+                                <span className="text-red-600 font-semibold">{t('products.out_of_stock')}</span>
                             )}
                         </div>
 
@@ -128,7 +128,7 @@ const ProductDetail = () => {
                             <div className="space-y-4">
                                 <div className="flex items-center space-x-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('product_detail.quantity')}</label>
                                         <input
                                             type="number"
                                             min="1"

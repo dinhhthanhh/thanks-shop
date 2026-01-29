@@ -19,7 +19,45 @@
         "featured_products": "Sản phẩm nổi bật",
         "featured_subtitle": "Khám phá những sản phẩm tẩy rửa phổ biến nhất của chúng tôi",
         "view_all": "Xem tất cả sản phẩm",
-        "shop_by_category": "Mua theo danh mục"
+        "shop_by_category": "Mua theo danh mục",
+        "our_collection": "Bộ sưu tập của chúng tôi",
+        "explore_items": "Khám phá sản phẩm"
+    },
+    "auth": {
+        "welcome_back": "Chào mừng trở lại",
+        "sign_in_subtitle": "Đăng nhập vào tài khoản cao cấp của bạn",
+        "email_label": "Địa chỉ Email",
+        "email_placeholder": "Nhập email của bạn",
+        "password_label": "Mật khẩu",
+        "password_placeholder": "Nhập mật khẩu của bạn",
+        "sign_in_button": "Đăng nhập",
+        "signing_in": "Đang đăng nhập...",
+        "no_account": "Chưa có tài khoản?",
+        "sign_up_link": "Đăng ký",
+        "create_account_title": "Tạo tài khoản",
+        "join_us": "Tham gia Thanks-Shop ngay hôm nay",
+        "full_name_label": "Họ và tên",
+        "full_name_placeholder": "Nhập họ tên của bạn",
+        "confirm_password_label": "Xác nhận mật khẩu",
+        "confirm_password_placeholder": "Xác nhận mật khẩu của bạn",
+        "create_account_button": "Tạo tài khoản",
+        "creating_account": "Đang tạo tài khoản...",
+        "have_account": "Đã có tài khoản?",
+        "sign_in_link": "Đăng nhập",
+        "passwords_not_match": "Mật khẩu không khớp",
+        "password_too_short": "Mật khẩu phải có ít nhất 6 ký tự"
+    },
+    "profile": {
+        "title": "Hồ sơ của tôi",
+        "update_success": "Cập nhật hồ sơ thành công!",
+        "change_password": "Đổi mật khẩu",
+        "leave_blank": "Để trống nếu bạn không muốn đổi mật khẩu",
+        "new_password_label": "Mật khẩu mới",
+        "new_password_placeholder": "Nhập mật khẩu mới",
+        "confirm_new_password_label": "Xác nhận mật khẩu mới",
+        "confirm_new_password_placeholder": "Xác nhận mật khẩu mới",
+        "update_button": "Cập nhật hồ sơ",
+        "updating": "Đang cập nhật..."
     },
     "products": {
         "filters": "Bộ lọc",
@@ -33,7 +71,7 @@
         "reset": "Đặt lại",
         "in_stock": "Còn hàng",
         "out_of_stock": "Hết hàng",
-        "add_to_cart": "Thêm vàogiỏ",
+        "add_to_cart": "Thêm vào giỏ",
         "buy_now": "Mua ngay"
     },
     "search": {
@@ -68,5 +106,20 @@
         "search_messages": "Tìm kiếm tin nhắn...",
         "no_results": "Không tìm thấy khách hàng",
         "auto_reply": "🤖 Trả lời tự động"
+    },
+    "footer": {
+        "about_title": "Về Thanks-Shop",
+        "about_text": "Nơi tin cậy cung cấp các sản phẩm tẩy rửa gia dụng. Sản phẩm chất lượng, giá cả phải chăng.",
+        "quick_links": "Liên kết nhanh",
+        "contact_us": "Liên hệ với chúng tôi",
+        "all_rights": "Bản quyền đã được bảo hộ."
+    },
+    "product_detail": {
+        "category": "Danh mục",
+        "stock": "Kho hàng",
+        "quantity": "Số lượng",
+        "available": "sản phẩm có sẵn",
+        "not_found": "Không tìm thấy sản phẩm",
+        "added_to_cart": "Đã thêm sản phẩm vào giỏ hàng!"
     }
 }
