@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { settingsAPI } from '../../services/api';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import AdminLayout from '../../components/admin/AdminLayout';
 
 const Settings = () => {
     const { theme, setTheme, themes } = useTheme();
@@ -14,26 +15,26 @@ const Settings = () => {
         try {
             await settingsAPI.updateTheme(newTheme);
             setTheme(newTheme);
-            setMessage('Theme updated successfully!');
+            setMessage(t('admin.settings_updated'));
             setTimeout(() => setMessage(''), 3000);
         } catch (error) {
             console.error('Error updating theme:', error);
-            setMessage('Failed to update theme.');
+            setMessage(t('admin.operation_failed_error'));
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6">
-            <h1 className="text-3xl font-bold mb-8">Store Settings</h1>
+        <AdminLayout>
+            <h1 className="text-3xl font-bold mb-8 text-gray-900">{t('admin.settings')}</h1>
 
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-                <h2 className="text-xl font-semibold mb-6">Seasonal Appearance</h2>
-                <p className="text-gray-500 mb-8">Select the active seasonal theme for the entire store.</p>
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 max-w-4xl">
+                <h2 className="text-xl font-semibold mb-2">{t('admin.shop_settings')}</h2>
+                <p className="text-gray-500 mb-8">{t('admin.category_management_subtitle')}</p>
 
                 {message && (
-                    <div className={`mb-6 p-4 rounded-xl ${message.includes('success') ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                    <div className={`mb-6 p-4 rounded-xl ${message === t('admin.settings_updated') ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
                         {message}
                     </div>
                 )}
@@ -63,7 +64,7 @@ const Settings = () => {
                                 )}
                             </div>
                             <h3 className="font-bold text-gray-900 group-hover:text-primary-600 transition-colors uppercase tracking-wide text-sm">{value.name}</h3>
-                            <p className="text-xs text-gray-400 mt-1">Global active theme</p>
+                            <p className="text-xs text-gray-400 mt-1">Active theme</p>
 
                             {key !== 'default' && (
                                 <div className="mt-4 text-2xl opacity-50">
@@ -77,7 +78,7 @@ const Settings = () => {
                     ))}
                 </div>
             </div>
-        </div>
+        </AdminLayout>
     );
 };
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { adminAPI } from '../../services/api';
 import { formatVND } from '../../utils/url';
-import AdminSidebar from '../../components/admin/AdminSidebar';
+import AdminLayout from '../../components/admin/AdminLayout';
 import Loading from '../../components/common/Loading';
 
 const AdminOrders = () => {
@@ -55,68 +55,65 @@ const AdminOrders = () => {
         return statusMap[status] || status;
     };
 
-    if (loading) return <div className="flex"><AdminSidebar /><Loading /></div>;
+    if (loading) return <AdminLayout><Loading /></AdminLayout>;
 
     return (
-        <div className="flex min-h-screen bg-gray-50">
-            <AdminSidebar />
-            <div className="flex-1 p-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('admin.orders_management')}</h1>
+        <AdminLayout>
+            <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('admin.orders_management')}</h1>
 
-                <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.order_id')}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.customer')}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.total')}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.status')}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.date')}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.actions')}</th>
+            <div className="bg-white rounded-lg shadow-md overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.order_id')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.customer')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.total')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.status')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.date')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.actions')}</th>
+                        </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                        {orders.map((order) => (
+                            <tr key={order._id}>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">
+                                    {order._id.slice(-8)}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div>
+                                        <div className="font-medium">{order.user?.name}</div>
+                                        <div className="text-sm text-gray-500">{order.user?.email}</div>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap font-semibold">
+                                    {formatVND(order.totalPrice)}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                                        {getStatusLabel(order.status)}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {new Date(order.createdAt).toLocaleDateString('vi-VN')}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <select
+                                        value={order.status}
+                                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                                        className="text-sm border rounded px-2 py-1"
+                                    >
+                                        <option value="pending">{t('admin.status_pending')}</option>
+                                        <option value="shipped">{t('admin.status_shipped')}</option>
+                                        <option value="completed">{t('admin.status_completed')}</option>
+                                        <option value="cancelled">{t('admin.status_cancelled')}</option>
+                                    </select>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {orders.map((order) => (
-                                <tr key={order._id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">
-                                        {order._id.slice(-8)}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div>
-                                            <div className="font-medium">{order.user?.name}</div>
-                                            <div className="text-sm text-gray-500">{order.user?.email}</div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap font-semibold">
-                                        {formatVND(order.totalPrice)}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                                            {getStatusLabel(order.status)}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {new Date(order.createdAt).toLocaleDateString('vi-VN')}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <select
-                                            value={order.status}
-                                            onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                                            className="text-sm border rounded px-2 py-1"
-                                        >
-                                            <option value="pending">{t('admin.status_pending')}</option>
-                                            <option value="shipped">{t('admin.status_shipped')}</option>
-                                            <option value="completed">{t('admin.status_completed')}</option>
-                                            <option value="cancelled">{t('admin.status_cancelled')}</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                        ))}
+                    </tbody>
+                </table>
             </div>
-        </div>
+        </AdminLayout>
     );
 };
 

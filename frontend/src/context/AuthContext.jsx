@@ -26,6 +26,37 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
+    // Auto-logout after 30 minutes of inactivity
+    useEffect(() => {
+        let timeoutId;
+        const INACTIVITY_LIMIT = 30 * 60 * 1000; // 30 minutes
+
+        const resetTimer = () => {
+            if (timeoutId) clearTimeout(timeoutId);
+            if (user) {
+                timeoutId = setTimeout(() => {
+                    logout();
+                }, INACTIVITY_LIMIT);
+            }
+        };
+
+        const activityEvents = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'];
+
+        if (user) {
+            resetTimer();
+            activityEvents.forEach(event => {
+                window.addEventListener(event, resetTimer);
+            });
+        }
+
+        return () => {
+            if (timeoutId) clearTimeout(timeoutId);
+            activityEvents.forEach(event => {
+                window.removeEventListener(event, resetTimer);
+            });
+        };
+    }, [user]);
+
     const login = async (email, password) => {
         try {
             const response = await authAPI.login({ email, password });
